@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <% include ../partials/head %>
+  <script type="text/javascript" src="../../scripts/deploy.js"></script>
+</head>
+
+<body class="container">
+
+  <header>
+    <% include ../partials/header %>
+  </header>
+
+  <main>
+    <div class="jumbotron">
+      <h1>Deploy</h1>
+      <p>You've indicated you'd like to deploy: <strong><%= template %></strong>. Is that correct?</p>
+      <button type="button" class="btn btn-primary" id="yes">Yes</button>
+      <button type="button" class="btn btn-default" id="no">No</button>
+    </div>
+  </main>
+
+  <input type="hidden" id="template" value="<%= template %>"></input>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+</body>
+</html>
