@@ -62,7 +62,7 @@ app.get("/login", function (req, res) {
   var uri = oauth2.getAuthorizationUrl({
     redirect_uri: callbackUrl,
     client_id: consumerKey,
-    scope: 'id api',
+    scope: 'id api refresh_token openid',
     state: 'test123'
     // You can change loginUrl to connect to sandbox or prerelease env.
     //base_url: 'https://test.my.salesforce.com'
@@ -79,6 +79,8 @@ app.get('/logout', function (req, res) {
 
 app.get('/oauth/callback', function (req, res) {
   const authorizationCode = req.param('code');
+  const state = req.param('state');
+  console.log('state', state);
 
   oauth2.authenticate({
     redirect_uri: callbackUrl,
@@ -89,16 +91,15 @@ app.get('/oauth/callback', function (req, res) {
 
     res.cookie('access_token', payload.access_token);
     res.cookie('instance_url', payload.instance_url);
+    res.cookie('refresh_token', payload.refresh_token);
     res.cookie('user_name', payload.id);
-    
+
     console.log(payload);
 
     const template = req.cookies.template;
     return res.redirect(`/deploy?template=${template}`);
-
   });
 });
-
 
 var router = express.Router();
 
@@ -106,6 +107,10 @@ router.post('/deploying', function (req, res) {
 
   var command = req.body.command;
   var param = req.body.param;
+
+  const access_token = req.cookies.access_token;
+  const instance_url = req.cookies.instance_url;
+  const refresh_token = req.cookies.refresh_token;
 
   if (command === 'clone') {
 
@@ -117,8 +122,29 @@ router.post('/deploying', function (req, res) {
 
   }
 
+  if (command === 'auth') {
+
+
+
+    const sfdxurl = `echo "force://${consumerKey}:${consumerSecret}:${refresh_token}@${instance_url}" > sfdx.key`;
+    const commandScript = `cd /tmp/test/repo;export FORCE_SHOW_SPINNER=;${sfdxurl};sfdx force:auth:sfdxurl:store -f sfdx.key -d`;
+    console.log('auth', commandScript);
+
+    exec(commandScript, (err, stdout, stderr) => {
+      console.log('create:stderr', stderr);
+      res.json({
+        message: `Authenticated to dev hub: ${stdout}`
+      });
+    });
+  }
+
   if (command === 'create') {
-    exec(`cd /tmp/test/repo;export FORCE_SHOW_SPINNER=;sfdx force:org:create -s -f ${param}`, (err, stdout, stderr) => {
+
+    const commandScript = `cd /tmp/test/repo;export FORCE_SHOW_SPINNER=;sfdx force:org:create -s -f ${param}`;
+    console.log('create', commandScript);
+
+    exec(commandScript, (err, stdout, stderr) => {
+      console.log('create:stderr', stderr);
       res.json({
         message: `Created scratch org: ${stdout}`
       });
@@ -145,7 +171,6 @@ router.post('/deploying', function (req, res) {
     const commandScript = 'cd /tmp/test/repo;export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result | jq -r .instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result | jq -r .accessToken)';
 
     exec(commandScript, (err, stdout, stderr) => {
-      console.log('stdout', stdout);
       res.json({
         message: `${stdout}`
       });
@@ -157,7 +182,7 @@ router.post('/deploying', function (req, res) {
     const commandScript = 'rm -rf /tmp/test';
     exec(commandScript, (err, stdout, stderr) => {
       res.json({
-        message: `Removed temp files and cleaned up`
+        message: 'Removed temp files and cleaned up'
       });
     });
   }

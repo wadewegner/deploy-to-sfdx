@@ -53,10 +53,10 @@ $(document).ready(function () {
         success: (commandDataResponse) => {
           update_status(`${commandDataResponse.message}`);
 
-          // create org
+
+          // auth dev hub
           commandData = {};
-          commandData.command = 'create';
-          commandData.param = scratchOrgDef;
+          commandData.command = 'auth';
 
           $.ajax({
             type: 'POST',
@@ -67,9 +67,10 @@ $(document).ready(function () {
             success: (commandDataResponse) => {
               update_status(`${commandDataResponse.message}`);
 
-              // push source
+              // create org
               commandData = {};
-              commandData.command = 'push';
+              commandData.command = 'create';
+              commandData.param = scratchOrgDef;
 
               $.ajax({
                 type: 'POST',
@@ -80,9 +81,9 @@ $(document).ready(function () {
                 success: (commandDataResponse) => {
                   update_status(`${commandDataResponse.message}`);
 
-                  // run tests
+                  // push source
                   commandData = {};
-                  commandData.command = 'test';
+                  commandData.command = 'push';
 
                   $.ajax({
                     type: 'POST',
@@ -93,9 +94,9 @@ $(document).ready(function () {
                     success: (commandDataResponse) => {
                       update_status(`${commandDataResponse.message}`);
 
-                      // generate url
+                      // run tests
                       commandData = {};
-                      commandData.command = 'url';
+                      commandData.command = 'test';
 
                       $.ajax({
                         type: 'POST',
@@ -104,17 +105,11 @@ $(document).ready(function () {
                         contentType: 'application/json; charset=utf-8',
                         dataType: 'json',
                         success: (commandDataResponse) => {
-                          update_status(`Login URL: ${commandDataResponse.message}`);
+                          update_status(`${commandDataResponse.message}`);
 
-                          const url = commandDataResponse.message;
-                          $("#loginUrl").attr("href", url);
-                          $("#loginUrl").text(`${url.substring(0, 80)}...`);
-
-                          $('#loginBlock').show();
-
-                          // clean up
+                          // generate url
                           commandData = {};
-                          commandData.command = 'clean';
+                          commandData.command = 'url';
 
                           $.ajax({
                             type: 'POST',
@@ -123,15 +118,36 @@ $(document).ready(function () {
                             contentType: 'application/json; charset=utf-8',
                             dataType: 'json',
                             success: (commandDataResponse) => {
-                              update_status(`${commandDataResponse.message}`);
+                              update_status(`Login URL: ${commandDataResponse.message}`);
+
+                              const url = commandDataResponse.message;
+                              $("#loginUrl").attr("href", url);
+                              $("#loginUrl").text(`${url.substring(0, 80)}...`);
+
+                              $('#loginBlock').show();
+
+                              // clean up
+                              commandData = {};
+                              commandData.command = 'clean';
+
+                              // $.ajax({
+                              //   type: 'POST',
+                              //   url: '/api/deploying',
+                              //   data: JSON.stringify(commandData),
+                              //   contentType: 'application/json; charset=utf-8',
+                              //   dataType: 'json',
+                              //   success: (commandDataResponse) => {
+                              //     update_status(`${commandDataResponse.message}`);
 
                               message = `DONE!\n\n${message}`;
                               $('textarea#status').val(message);
+                              // }
+                              // });
                             }
                           });
+
                         }
                       });
-
                     }
                   });
                 }
