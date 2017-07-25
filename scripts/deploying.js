@@ -10,6 +10,24 @@ $(document).ready(function () {
     $('textarea#status').val(message);
   }
 
+  async function deployingApi(command, param) {
+
+    commandData = {};
+    commandData.command = command;
+    commandData.param = param;
+
+    await $.ajax({
+      type: 'POST',
+      url: '/api/deploying',
+      data: JSON.stringify(commandData),
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      success: (commandDataResponse) => {
+        update_status(`${commandDataResponse.message}`);
+      }
+    });
+  }
+
   let githubRepo = $('input#template').val();
 
   let yamlFile = githubRepo.replace('github.com', 'raw.githubusercontent.com');
@@ -40,121 +58,49 @@ $(document).ready(function () {
 \tshow-scratch-org-url: ${showScratchOrgUrl}`);
 
       // clone org
-      let commandData = {};
-      commandData.command = 'clone';
-      commandData.param = githubRepo;
+      deployingApi('clone', githubRepo).then(() => {
+        // auth dev hub
+        deployingApi('auth').then(() => {
+          // create org
+          deployingApi('create', scratchOrgDef).then(() => {
+            // push source
+            deployingApi('push').then(() => {
+              // run tests
+              deployingApi('test').then(() => {
 
-      $.ajax({
-        type: 'POST',
-        url: '/api/deploying',
-        data: JSON.stringify(commandData),
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        success: (commandDataResponse) => {
-          update_status(`${commandDataResponse.message}`);
+                // generate url
+                commandData = {};
+                commandData.command = 'url';
 
+                $.ajax({
+                  type: 'POST',
+                  url: '/api/deploying',
+                  data: JSON.stringify(commandData),
+                  contentType: 'application/json; charset=utf-8',
+                  dataType: 'json',
+                  success: (commandDataResponse) => {
+                    update_status(`${commandDataResponse.message}`);
 
-          // auth dev hub
-          commandData = {};
-          commandData.command = 'auth';
+                    const url = commandDataResponse.message;
 
-          $.ajax({
-            type: 'POST',
-            url: '/api/deploying',
-            data: JSON.stringify(commandData),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: (commandDataResponse) => {
-              update_status(`${commandDataResponse.message}`);
+                    $("#loginUrl").attr("href", url);
+                    $("#loginUrl").text(`${url.substring(0, 80)}...`);
+                    $('#loginBlock').show();
 
-              // create org
-              commandData = {};
-              commandData.command = 'create';
-              commandData.param = scratchOrgDef;
+                    // clean up
+                    commandData = {};
+                    commandData.command = 'clean';
 
-              $.ajax({
-                type: 'POST',
-                url: '/api/deploying',
-                data: JSON.stringify(commandData),
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                success: (commandDataResponse) => {
-                  update_status(`${commandDataResponse.message}`);
+                    deployingApi(commandData);
 
-                  // push source
-                  commandData = {};
-                  commandData.command = 'push';
-
-                  $.ajax({
-                    type: 'POST',
-                    url: '/api/deploying',
-                    data: JSON.stringify(commandData),
-                    contentType: 'application/json; charset=utf-8',
-                    dataType: 'json',
-                    success: (commandDataResponse) => {
-                      update_status(`${commandDataResponse.message}`);
-
-                      // run tests
-                      commandData = {};
-                      commandData.command = 'test';
-
-                      $.ajax({
-                        type: 'POST',
-                        url: '/api/deploying',
-                        data: JSON.stringify(commandData),
-                        contentType: 'application/json; charset=utf-8',
-                        dataType: 'json',
-                        success: (commandDataResponse) => {
-                          update_status(`${commandDataResponse.message}`);
-
-                          // generate url
-                          commandData = {};
-                          commandData.command = 'url';
-
-                          $.ajax({
-                            type: 'POST',
-                            url: '/api/deploying',
-                            data: JSON.stringify(commandData),
-                            contentType: 'application/json; charset=utf-8',
-                            dataType: 'json',
-                            success: (commandDataResponse) => {
-                              update_status(`Login URL: ${commandDataResponse.message}`);
-
-                              const url = commandDataResponse.message;
-                              $("#loginUrl").attr("href", url);
-                              $("#loginUrl").text(`${url.substring(0, 80)}...`);
-
-                              $('#loginBlock').show();
-
-                              // clean up
-                              commandData = {};
-                              commandData.command = 'clean';
-
-                              // $.ajax({
-                              //   type: 'POST',
-                              //   url: '/api/deploying',
-                              //   data: JSON.stringify(commandData),
-                              //   contentType: 'application/json; charset=utf-8',
-                              //   dataType: 'json',
-                              //   success: (commandDataResponse) => {
-                              //     update_status(`${commandDataResponse.message}`);
-
-                              message = `DONE!\n\n${message}`;
-                              $('textarea#status').val(message);
-                              // }
-                              // });
-                            }
-                          });
-
-                        }
-                      });
-                    }
-                  });
-                }
+                    message = `DONE!\n\n${message}`;
+                    $('textarea#status').val(message);
+                  }
+                });
               });
-            }
+            });
           });
-        }
+        });
       });
     }
   });

@@ -124,8 +124,6 @@ router.post('/deploying', function (req, res) {
 
   if (command === 'auth') {
 
-
-
     const sfdxurl = `echo "force://${consumerKey}:${consumerSecret}:${refresh_token}@${instance_url}" > sfdx.key`;
     const commandScript = `cd /tmp/test/repo;export FORCE_SHOW_SPINNER=;${sfdxurl};sfdx force:auth:sfdxurl:store -f sfdx.key -d`;
     console.log('auth', commandScript);
