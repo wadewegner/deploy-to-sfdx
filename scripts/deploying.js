@@ -57,51 +57,54 @@ $(document).ready(function () {
 \tscratch-org-def: ${scratchOrgDef}
 \tshow-scratch-org-url: ${showScratchOrgUrl}`);
 
-      // clone org
-      deployingApi('clone', githubRepo).then(() => {
-        // auth dev hub
-        deployingApi('auth').then(() => {
-          // create org
-          deployingApi('create', scratchOrgDef).then(() => {
-            // push source
-            deployingApi('push').then(() => {
-              // run tests
-              deployingApi('test').then(() => {
+return deployingApi('clone', githubRepo)
+  .then(() => {
+    return deployingApi('auth');
+  })
+  .then(() => {
+    return deployingApi('create', scratchOrgDef);
+  })
+  .then(() => {
+    return deployingApi('push');
+  })
+  .then(() => {
+    return deployingApi('auth');
+  })
+  .then(() => {
+    return deployingApi('test');
+  })
+  .then(() => {
 
-                // generate url
-                commandData = {};
-                commandData.command = 'url';
+    // generate url
+    commandData = {};
+    commandData.command = 'url';
 
-                $.ajax({
-                  type: 'POST',
-                  url: '/api/deploying',
-                  data: JSON.stringify(commandData),
-                  contentType: 'application/json; charset=utf-8',
-                  dataType: 'json',
-                  success: (commandDataResponse) => {
-                    update_status(`${commandDataResponse.message}`);
+    $.ajax({
+      type: 'POST',
+      url: '/api/deploying',
+      data: JSON.stringify(commandData),
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      success: (commandDataResponse) => {
+        update_status(`${commandDataResponse.message}`);
 
-                    const url = commandDataResponse.message;
+        const url = commandDataResponse.message;
 
-                    $("#loginUrl").attr("href", url);
-                    $("#loginUrl").text(`${url.substring(0, 80)}...`);
-                    $('#loginBlock').show();
+        $("#loginUrl").attr("href", url);
+        $("#loginUrl").text(`${url.substring(0, 80)}...`);
+        $('#loginBlock').show();
 
-                    // clean up
-                    commandData = {};
-                    commandData.command = 'clean';
+        // clean up
+        commandData = {};
+        commandData.command = 'clean';
 
-                    deployingApi(commandData);
+        deployingApi(commandData);
 
-                    message = `DONE!\n\n${message}`;
-                    $('textarea#status').val(message);
-                  }
-                });
-              });
-            });
-          });
-        });
-      });
+        message = `DONE!\n\n${message}`;
+        $('textarea#status').val(message);
+      }
+    });
+  });
     }
   });
 });
