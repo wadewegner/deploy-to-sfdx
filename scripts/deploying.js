@@ -79,7 +79,7 @@ return deployingApi('clone', githubRepo)
     commandData = {};
     commandData.command = 'url';
 
-    $.ajax({
+    return $.ajax({
       type: 'POST',
       url: '/api/deploying',
       data: JSON.stringify(commandData),
