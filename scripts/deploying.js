@@ -98,12 +98,6 @@ $(document).ready(() => {
               commandData = {};
               commandData.command = 'clean';
               commandData.timestamp = timestamp;
-
-              // return deployingApi('clean', timestamp).then(() => {
-
-              // };
-
-
             }
           }).then(() => {
             return deployingApi('clean', timestamp)
