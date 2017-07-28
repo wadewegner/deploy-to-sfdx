@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../partials/head %>
+</head>
+
+<body class="container">
+
+  <header>
+    <% include ../partials/header %>
+  </header>
+
+  <main>
+    <div class="jumbotron">
+      <h1>Not DevHub</h1><small>
+
+      <p>
+        Sorry, but it looks like the org you've logged into is not a <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth.htm" target="_blank">dev hub</a>.
+        Consequently, you cannot currently use <strong>Deploy to Salesforce DX</strong> to create a stratch org from a Github repo.
+      </p>
+      <p>To try this out, you have two options:</p>
+      <div>
+        <ol class="list-group">
+          <li class="list-group-item">Enable dev hub in a Production or Business Org (i.e. not a DE org). Search on “Dev Hub” from Setup and then click Enabled.</li>
+          <li class="list-group-item">Get a <a href="https://sfdc.co/DX-Trial-Org">30-day free trial.</a></li>
+        </ol>
+      </div>
+        <p>Please try again once you've gotten this resolved.
+      </p>
+
+    </div>
+  </main>
+
+  <footer>
+    <% include ../partials/footer %>
+  </footer>
+
+</body>
+
+</html>

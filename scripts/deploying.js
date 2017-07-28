@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(() => {
 
   let actionCount = 0;
   let message = '';
@@ -10,13 +10,14 @@ $(document).ready(function () {
     $('textarea#status').val(message);
   }
 
-  async function deployingApi(command, param) {
+  function deployingApi(command, timestamp, param) {
 
-    commandData = {};
+    const commandData = {};
     commandData.command = command;
+    commandData.timestamp = timestamp;
     commandData.param = param;
 
-    await $.ajax({
+    return $.ajax({
       type: 'POST',
       url: '/api/deploying',
       data: JSON.stringify(commandData),
@@ -28,8 +29,7 @@ $(document).ready(function () {
     });
   }
 
-  let githubRepo = $('input#template').val();
-
+  const githubRepo = $('input#template').val();
   let yamlFile = githubRepo.replace('github.com', 'raw.githubusercontent.com');
   yamlFile += '/master/.salesforcedx.yaml';
 
@@ -42,7 +42,9 @@ $(document).ready(function () {
 
       update_status(`Discovered ${yamlFile}`);
 
-      var doc = jsyaml.load(yamlFileDataResponse);
+      const doc = jsyaml.load(yamlFileDataResponse);
+
+      const timestamp = new Date().getTime().toString();
 
       const assignPermset = doc['assign-permset'];
       const deleteScratchOrg = doc['delete-scratch-org'];
@@ -57,27 +59,25 @@ $(document).ready(function () {
 \tscratch-org-def: ${scratchOrgDef}
 \tshow-scratch-org-url: ${showScratchOrgUrl}`);
 
-      return deployingApi('clone', githubRepo)
+      return deployingApi('clone', timestamp, githubRepo)
         .then(() => {
-          return deployingApi('auth');
+          return deployingApi('auth', timestamp);
         })
         .then(() => {
-          return deployingApi('create', scratchOrgDef);
+          return deployingApi('create', timestamp, scratchOrgDef);
         })
         .then(() => {
-          return deployingApi('push');
+          return deployingApi('push', timestamp);
         })
         .then(() => {
-          return deployingApi('auth');
-        })
-        .then(() => {
-          return deployingApi('test');
+          return deployingApi('test', timestamp);
         })
         .then(() => {
 
           // generate url
-          commandData = {};
+          let commandData = {};
           commandData.command = 'url';
+          commandData.timestamp = timestamp;
 
           return $.ajax({
             type: 'POST',
@@ -86,23 +86,33 @@ $(document).ready(function () {
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: (commandDataResponse) => {
-              update_status(`${commandDataResponse.message}`);
+              update_status(`Generated a login url: ${commandDataResponse.message}`);
 
               const url = commandDataResponse.message;
 
-              $("#loginUrl").attr("href", url);
-              $("#loginUrl").text(`${url.substring(0, 80)}...`);
+              $('#loginUrl').attr('href', url);
+              $('#loginUrl').text(`${url.substring(0, 80)}...`);
               $('#loginBlock').show();
 
               // clean up
               commandData = {};
               commandData.command = 'clean';
+              commandData.timestamp = timestamp;
 
-              deployingApi(commandData);
+              // return deployingApi('clean', timestamp).then(() => {
 
-              message = `DONE!\n\n${message}`;
-              $('textarea#status').val(message);
+              // };
+
+
             }
+          }).then(() => {
+            return deployingApi('clean', timestamp)
+              .then(() => {
+                
+                message = `Finished. You have deploy the app to Salesforce DX!\n\n${message}`;
+                $('textarea#status').val(message);
+              
+              });
           });
         });
     }

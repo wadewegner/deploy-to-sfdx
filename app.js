@@ -1,18 +1,21 @@
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
-const sleep = require('sleep');
-var cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const oauth2 = require('salesforce-oauth2');
+const jsforce = require('jsforce');
+const commands = require('./lib/commands.js');
+
 const {
   exec
 } = require('child_process');
-const oauth2 = require('salesforce-oauth2');
+
+const app = express();
 
 const callbackUrl = process.env.CALLBACKURL;
 const consumerKey = process.env.CONSUMERKEY;
 const consumerSecret = process.env.CONSUMERSECRET;
 
-app.use('/scripts', express.static(__dirname + '/scripts'));
+app.use('/scripts', express.static(`${__dirname}/scripts`));
 
 app.use(bodyParser.urlencoded({
   extended: true
@@ -22,15 +25,27 @@ app.set('view engine', 'ejs');
 
 app.use(cookieParser());
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.render('pages/index', {});
 });
 
-app.get('/about', function (req, res) {
+app.get('/about', (req, res) => {
   res.render('pages/about');
 });
 
-app.get('/deploy', function (req, res) {
+app.get('/notdevhub', (req, res) => {
+  const template = req.query.template;
+  res.cookie('template', template);
+
+  const user_name = req.cookies.user_name;
+
+  res.render('pages/notdevhub', {
+    template: template,
+    user_name: user_name
+  });
+});
+
+app.get('/deploy', (req, res) => {
   const template = req.query.template;
 
   res.cookie('template', template);
@@ -51,145 +66,207 @@ app.get('/deploy', function (req, res) {
   }
 });
 
-app.get('/deploying', function (req, res) {
+app.get('/deploying', (req, res) => {
   const template = req.query.template;
   res.render('pages/deploying', {
     template: template
   });
 });
 
-app.get("/login", function (req, res) {
-  var uri = oauth2.getAuthorizationUrl({
+app.get("/login", (req, res) => {
+  const uri = oauth2.getAuthorizationUrl({
     redirect_uri: callbackUrl,
     client_id: consumerKey,
     scope: 'id api refresh_token openid',
     state: 'test123'
-    // You can change loginUrl to connect to sandbox or prerelease env.
-    //base_url: 'https://test.my.salesforce.com'
   });
   return res.redirect(uri);
 });
 
-app.get('/logout', function (req, res) {
-  res.clearCookie('access_token');
-  res.clearCookie('instance_url');
+app.get('/logout', (req, res) => {
 
-  return res.redirect('/');
+  const access_token = req.cookies.access_token;
+  const instance_url = req.cookies.instance_url;
+
+  const conn = new jsforce.Connection({
+    instanceUrl: instance_url,
+    accessToken: access_token
+  });
+
+  conn.logout((err) => {
+    if (err) {
+      return console.error(err);
+    }
+    res.clearCookie('access_token');
+    res.clearCookie('instance_url');
+
+    return res.redirect('/');
+  });
 });
 
-app.get('/oauth/callback', function (req, res) {
+app.get('/oauth/callback', (req, res) => {
   const authorizationCode = req.param('code');
-  const state = req.param('state');
-  console.log('state', state);
+  // const state = req.param('state'); // TODO: use state and query instead of cookies
 
   oauth2.authenticate({
     redirect_uri: callbackUrl,
     client_id: consumerKey,
     client_secret: consumerSecret,
     code: authorizationCode
-  }, function (error, payload) {
+  }, (error, payload) => {
 
     res.cookie('access_token', payload.access_token);
     res.cookie('instance_url', payload.instance_url);
     res.cookie('refresh_token', payload.refresh_token);
-    res.cookie('user_name', payload.id);
 
     console.log(payload);
 
-    const template = req.cookies.template;
-    return res.redirect(`/deploy?template=${template}`);
+    // check to see if org is a dev hub
+    const conn = new jsforce.Connection({
+      instanceUrl: payload.instance_url,
+      accessToken: payload.access_token
+    });
+
+    conn.identity((err, identity) => {
+      if (err) {
+        return console.error(err);
+      }
+
+      res.cookie('user_name', identity.username);
+
+      conn.tooling.query("SELECT DurableId, SettingValue FROM OrganizationSettingsDetail WHERE SettingName = 'ScratchOrgManagementPref'", (err, result) => {
+        if (err) {
+          return console.error(err);
+        }
+
+        const template = req.cookies.template;
+
+        if (result.size > 0) {
+          const devHubEnabled = result.records[0].SettingValue;
+
+          if (devHubEnabled === true) {
+            return res.redirect(`/deploy?template=${template}`);
+          } else {
+            return res.redirect(`/notdevhub?template=${template}`);
+          }
+        } else {
+          return res.redirect(`/notdevhub?template=${template}`);
+        }
+      });
+    });
   });
 });
 
-var router = express.Router();
+const router = express.Router();
 
-router.post('/deploying', function (req, res) {
+router.post('/deploying', (req, res) => {
 
-  var command = req.body.command;
-  var param = req.body.param;
-
+  const command = req.body.command;
+  const timestamp = req.body.timestamp;
+  const param = req.body.param;
   const access_token = req.cookies.access_token;
   const instance_url = req.cookies.instance_url;
   const refresh_token = req.cookies.refresh_token;
 
-  if (command === 'clone') {
+  const tokenName = access_token.replace(/\W/g, '');
+  const startingDirectory = process.env.STARTINGDIRECTORY;
+  const directory = `${tokenName}-${timestamp}`;
 
-    exec(`cd /tmp;mkdir test;cd test;git clone ${param} repo`, (err, stdout, stderr) => {
-      res.json({
-        message: `Successfully cloned ${param}`
+  let script;
+  let sfdxurl;
+
+  switch (command) {
+
+    case 'clone':
+
+      script = `${startingDirectory}mkdir ${directory};cd ${directory};git clone ${param} .`;
+
+      commands.run(command, script, () => {
+        res.json({
+          message: `Successfully cloned ${param}`
+        });
       });
-    });
 
-  }
+      break;
 
-  if (command === 'auth') {
+    case 'auth':
 
-    const sfdxurl = `echo "force://${consumerKey}:${consumerSecret}:${refresh_token}@${instance_url}" > sfdx.key`;
-    const commandScript = `cd /tmp/test/repo;export FORCE_SHOW_SPINNER=;${sfdxurl};sfdx force:auth:sfdxurl:store -f sfdx.key -d`;
-    console.log('auth', commandScript);
+      sfdxurl = `echo "force://${consumerKey}:${consumerSecret}:${refresh_token}@${instance_url}" > sfdx.key`;
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;${sfdxurl};sfdx force:auth:sfdxurl:store -f sfdx.key -d`;
 
-    exec(commandScript, (err, stdout, stderr) => {
-      console.log('create:stderr', stderr);
-      res.json({
-        message: `Authenticated to dev hub: ${stdout}`
+      commands.run(command, script, (result) => {
+        res.json({
+          message: `Authenticated to dev hub: ${result}`
+        });
       });
-    });
-  }
 
-  if (command === 'create') {
+      break;
 
-    const commandScript = `cd /tmp/test/repo;export FORCE_SHOW_SPINNER=;sfdx force:org:create -s -f ${param}`;
-    console.log('create', commandScript);
+    case 'create':
 
-    exec(commandScript, (err, stdout, stderr) => {
-      console.log('create:stderr', stderr);
-      res.json({
-        message: `Created scratch org: ${stdout}`
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:config:set instanceUrl=${instance_url};sfdx force:org:create -v '${access_token}' -s -f ${param}`;
+
+      commands.run(command, script, (result) => {
+        res.json({
+          message: `Created scratch org: ${result}`
+        });
       });
-    });
-  }
 
-  if (command === 'push') {
-    exec(`cd /tmp/test/repo;export FORCE_SHOW_SPINNER=;sfdx force:source:push`, (err, stdout, stderr) => {
-      res.json({
-        message: `Pushed source:\n\t${stdout}`
+      break;
+
+    case 'push':
+
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:source:push`;
+
+      commands.run(command, script, (result) => {
+        res.json({
+          message: `Pushed source:\n\t${result}`
+        });
       });
-    });
-  }
 
-  if (command === 'test') {
-    exec(`cd /tmp/test/repo;export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`, (err, stdout, stderr) => {
-      res.json({
-        message: `Apex tests: ${stdout}`
+      break;
+
+    case 'test':
+
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
+
+      commands.run(command, script, (result) => {
+        res.json({
+          message: `Apex tests: ${result}`
+        });
       });
-    });
-  }
 
-  if (command === 'url') {
-    const commandScript = 'cd /tmp/test/repo;export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result | jq -r .instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result | jq -r .accessToken)';
+      break;
 
-    exec(commandScript, (err, stdout, stderr) => {
-      res.json({
-        message: `${stdout}`
+    case 'url':
+
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result | jq -r .instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result | jq -r .accessToken)`;
+
+      commands.run(command, script, (result) => {
+        res.json({
+          message: `${result}`
+        });
       });
-    });
-  }
 
-  if (command === 'clean') {
+      break;
 
-    const commandScript = 'rm -rf /tmp/test';
-    exec(commandScript, (err, stdout, stderr) => {
-      res.json({
-        message: 'Removed temp files and cleaned up'
+    case 'clean':
+
+      script = `${startingDirectory}rm -rf ${directory}`;
+
+      commands.run(command, script, () => {
+        res.json({
+          message: 'Removed temp files and cleaned up'
+        });
       });
-    });
-  }
 
+      break;
+  }
 });
 
 app.use('/api', router);
 
-var port = process.env.PORT || 8080;
-app.listen(port, function () {
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`);
 });
