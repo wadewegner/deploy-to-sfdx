@@ -6,7 +6,7 @@
   "keywords": ["deploy", "sfdx", "salesforcedx"],
   "image": "",
   "scripts": {
-    "postdeploy": "bin/deploy.sh"
+    "postdeploy": "bin/deploy"
   },
   "env": {
     "CALLBACKURL": {
