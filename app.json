@@ -26,11 +26,11 @@
       "value": ""
     }
   },
-  // "environments": {
-  //   "test": {
-  //     "scripts": {
-  //       "test": "bundle exec rake test"
-  //     }
-  //   }
-  // }
+  "buildpacks": [{
+      "url": "https://github.com/wadewegner/sfdx-buildpack"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
 }
