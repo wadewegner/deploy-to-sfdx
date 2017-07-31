@@ -184,7 +184,8 @@ router.post('/deploying', (req, res) => {
       script = `${cli_path}sfdx force --help`;
       // script = `${startingDirectory}mkdir ${directory};cd ${directory};git clone ${param} .`;
 
-      commands.run(command, script, () => {
+      commands.run(command, script, (result) => {
+        console.log('temp result', result);
         res.json({
           message: `Successfully cloned ${param}`
         });
