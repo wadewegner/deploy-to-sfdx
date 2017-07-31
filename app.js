@@ -172,6 +172,8 @@ router.post('/deploying', (req, res) => {
   const startingDirectory = process.env.STARTINGDIRECTORY;
   const directory = `${tokenName}-${timestamp}`;
 
+  const cli_path = process.env.CLI_PATH;
+
   let script;
   let sfdxurl;
 
@@ -192,7 +194,7 @@ router.post('/deploying', (req, res) => {
     case 'auth':
 
       sfdxurl = `echo "force://${consumerKey}:${consumerSecret}:${refresh_token}@${instance_url}" > sfdx.key`;
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;${sfdxurl};sfdx force:auth:sfdxurl:store -f sfdx.key -d`;
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;${sfdxurl};${cli_path}sfdx force:auth:sfdxurl:store -f sfdx.key -d`;
 
       commands.run(command, script, (result) => {
         res.json({
@@ -204,7 +206,7 @@ router.post('/deploying', (req, res) => {
 
     case 'create':
 
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:config:set instanceUrl=${instance_url};sfdx force:org:create -v '${access_token}' -s -f ${param}`;
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;${cli_path}sfdx force:config:set instanceUrl=${instance_url};${cli_path}sfdx force:org:create -v '${access_token}' -s -f ${param}`;
 
       commands.run(command, script, (result) => {
         res.json({
@@ -216,7 +218,7 @@ router.post('/deploying', (req, res) => {
 
     case 'push':
 
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:source:push`;
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;${cli_path}sfdx force:source:push`;
 
       commands.run(command, script, (result) => {
         res.json({
@@ -228,7 +230,7 @@ router.post('/deploying', (req, res) => {
 
     case 'test':
 
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;${cli_path}sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
 
       commands.run(command, script, (result) => {
         res.json({
@@ -240,7 +242,7 @@ router.post('/deploying', (req, res) => {
 
     case 'url':
 
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result | jq -r .instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result | jq -r .accessToken)`;
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;echo $(${cli_path}sfdx force:org:display --json | jq -r .result | jq -r .instanceUrl)"/secur/frontdoor.jsp?sid="$(${cli_path}sfdx force:org:display --json | jq -r .result | jq -r .accessToken)`;
 
       commands.run(command, script, (result) => {
         res.json({
