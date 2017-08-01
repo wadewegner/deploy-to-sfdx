@@ -5,6 +5,10 @@ echo "Updating Salesforce CLI plugin ..."
 sfdx update
 
 echo "Installing JQ for JSON parsing ..."
-apt-get install jq
+wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+chmod +x ./jq
+
+echo ""
+export PATH=$PATH:/app/jq
 
 echo "Completed!"
