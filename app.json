@@ -27,7 +27,7 @@
     }
   },
   "buildpacks": [{
-      "url": "https://github.com/wadewegner/sfdx-buildpack"
+      "url": "https://github.com/wadewegner/salesforce-cli-buildpack"
     },
     {
       "url": "heroku/nodejs"
