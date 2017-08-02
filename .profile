@@ -5,10 +5,12 @@ chmod +x ./jq
 echo "Updating PATH to include jq ..."
 export PATH=$PATH:/app/jq
 
-echo "Updating PATH to include Salesforce CLI ..."
-export PATH=$PATH:/app/.local/share/sfdx/cli/bin/
+jq --help
 
-echo "Updating Salesforce CLI plugin ..."
-sfdx update
+# echo "Updating PATH to include Salesforce CLI ..."
+# export PATH=$PATH:/app/.local/share/sfdx/cli/bin/
 
-echo "Completed!"
+# echo "Updating Salesforce CLI plugin ..."
+# sfdx update
+
+# echo "Completed!"
