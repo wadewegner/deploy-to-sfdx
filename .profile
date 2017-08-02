@@ -11,8 +11,8 @@ export PATH=$PATH:/app/.local/share/jq/bin
 echo "Updating PATH to include Salesforce CLI ..."
 export PATH=$PATH:/app/.local/share/sfdx/cli/bin/
 
-echo "Updating Salesforce CLI plugin ..."
-sfdx update
+# echo "Updating Salesforce CLI plugin ..."
+# sfdx update
 
 echo "Creating local resources ..."
 mkdir /app/tmp
