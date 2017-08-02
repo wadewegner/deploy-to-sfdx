@@ -161,7 +161,7 @@ const router = express.Router();
 
 router.get('/test', (req, res) => {
 
-  const script = `echo $PATH;which jq;jq --help`;
+  const script = `ls -lA /app/.local/share/jq/bin`;
 
   commands.run('test', script, (result) => {
     res.json({
