@@ -5,6 +5,7 @@ chmod +x ./jq
 echo "Updating PATH to include jq ..."
 export PATH=$PATH:/app/jq
 
+ls -lA
 jq --help
 
 # echo "Updating PATH to include Salesforce CLI ..."
