@@ -161,10 +161,9 @@ const router = express.Router();
 
 router.get('/test', (req, res) => {
 
-  const script = `jq --help`;
+  const script = `echo $PATH;which jq;jq --help`;
 
   commands.run('test', script, (result) => {
-    console.log('temp result', result);
     res.json({
       message: result
     });
