@@ -161,7 +161,7 @@ const router = express.Router();
 
 router.get('/test', (req, res) => {
 
-  const script = `./app/jq --help`;
+  const script = `jq --help`;
 
   commands.run('test', script, (result) => {
     res.json({
