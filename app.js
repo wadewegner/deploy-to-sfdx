@@ -159,17 +159,17 @@ app.get('/oauth/callback', (req, res) => {
 
 const router = express.Router();
 
-// router.get('/test', (req, res) => {
+router.get('/test', (req, res) => {
 
-//   const script = `ls -lA;./jq --help`;
+  const script = `ls -lA;./jq --help`;
 
-//   commands.run('test', script, (result) => {
-//     res.json({
-//       message: result
-//     });
-//   });
+  commands.run('test', script, (result) => {
+    res.json({
+      message: result
+    });
+  });
 
-// });
+});
 
 router.post('/deploying', (req, res) => {
 
