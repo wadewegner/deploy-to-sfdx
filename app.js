@@ -243,7 +243,7 @@ router.post('/deploying', (req, res) => {
 
     case 'test':
 
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | ./jq -r .result | ./jq -r .summary | ./jq -r .outcome`;
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
 
       commands.run(command, script, (result) => {
         res.json({
@@ -255,7 +255,7 @@ router.post('/deploying', (req, res) => {
 
     case 'url':
 
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | ./jq -r .result | ./jq -r .instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | ./jq -r .result | ./jq -r .accessToken)`;
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result | jq -r .instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result | jq -r .accessToken)`;
 
       commands.run(command, script, (result) => {
         res.json({
