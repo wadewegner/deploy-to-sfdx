@@ -47,6 +47,7 @@ $(document).ready(() => {
       const timestamp = new Date().getTime().toString();
 
       const assignPermset = doc['assign-permset'];
+      const permsetName = doc['permset-name'];
       const deleteScratchOrg = doc['delete-scratch-org'];
       const runApexTests = doc['run-apex-tests'];
       const scratchOrgDef = doc['scratch-org-def'];
@@ -54,6 +55,7 @@ $(document).ready(() => {
 
       update_status(`Parsed the following values from the yaml file:
 \tassign-permset: ${assignPermset}
+\tpermset-name: ${permsetName}
 \tdelete-scratch-org: ${deleteScratchOrg}
 \trun-apex-tests: ${runApexTests}
 \tscratch-org-def: ${scratchOrgDef}
@@ -102,10 +104,10 @@ $(document).ready(() => {
           }).then(() => {
             return deployingApi('clean', timestamp)
               .then(() => {
-                
+
                 message = `Finished. You have deploy the app to Salesforce DX!\n\n${message}`;
                 $('textarea#status').val(message);
-              
+
               });
           });
         });
