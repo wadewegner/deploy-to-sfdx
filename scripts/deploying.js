@@ -73,7 +73,7 @@ $(document).ready(() => {
         })
         .then(() => {
           if (permsetName) {
-            return deployingApi('permset', permsetName);
+            return deployingApi('permset', timestamp, permsetName);
           } else {
             return null;
           }
