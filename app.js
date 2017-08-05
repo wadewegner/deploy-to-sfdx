@@ -241,6 +241,18 @@ router.post('/deploying', (req, res) => {
 
       break;
 
+    case 'permset':
+
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:user:permset:assign -n ${param}`;
+
+      commands.run(command, script, (result) => {
+        res.json({
+          message: `Permset assigned:\n\t${result}`
+        });
+      });
+
+      break;
+
     case 'test':
 
       script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;

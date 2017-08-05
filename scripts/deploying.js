@@ -72,6 +72,13 @@ $(document).ready(() => {
           return deployingApi('push', timestamp);
         })
         .then(() => {
+          if (permsetName) {
+            return deployingApi('permset', permsetName);
+          } else {
+            return null;
+          }
+        })
+        .then(() => {
           return deployingApi('test', timestamp);
         })
         .then(() => {
