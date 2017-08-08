@@ -62,9 +62,9 @@ $(document).ready(() => {
 \tshow-scratch-org-url: ${showScratchOrgUrl}`);
 
       return deployingApi('clone', timestamp, githubRepo)
-        .then(() => {
-          return deployingApi('auth', timestamp);
-        })
+        // .then(() => {
+        //   return deployingApi('auth', timestamp);
+        // })
         .then(() => {
           return deployingApi('create', timestamp, scratchOrgDef);
         })
