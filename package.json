@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "css-build": "mkdirp public/build/assets/css && mkdirp public/build/assets/fonts && node-sass src/scss -o public/build/assets/css && ncp node_modules/@salesforce-ux/design-system/assets/fonts public/build/assets/fonts",
+    "css-watch": "node-sass --watch src/scss -o public/build/assets/css"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/wadewegner/deploy-to-sfdx#readme",
   "dependencies": {
+    "@salesforce-ux/design-system": "^2.3.1",
     "body-parser": "^1.17.2",
     "child_process": "^1.0.2",
     "cookie-parser": "^1.4.3",
@@ -33,6 +35,9 @@
     "eslint": "^3.17.1",
     "eslint-config-airbnb-base": "^11.1.1",
     "eslint-plugin-import": "^2.2.0",
-    "mocha": "^3.2.0"
+    "mkdirp": "^0.5.1",
+    "mocha": "^3.2.0",
+    "ncp": "^2.0.0",
+    "node-sass": "^4.5.3"
   }
 }

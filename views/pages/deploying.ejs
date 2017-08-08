@@ -1,36 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+<% include ../partials/head %>
+<script type="text/javascript" src="../../scripts/js-yaml.min.js"></script>
+<script type="text/javascript" src="../../scripts/deploying.js"></script>
 
-<head>
-  <% include ../partials/head %>
-    <script type="text/javascript" src="../../scripts/js-yaml.min.js"></script>
-    <script type="text/javascript" src="../../scripts/deploying.js"></script>
-</head>
+<main class="slds-card slds-text-align_center">
+  <h1>Deploying</h1>
+  <p>From repo: <strong><%= template %><strong></p>
+  <textarea class="form-control" style="overflow-y: scroll;" rows="10" id="status"></textarea>
+  <div style="height:60px">
+    </br />
+    <p id="loginBlock" style="display: none;">Login: <a id="loginUrl" target="_blank" href=""></a></p>
+  </div>
+</main>
 
-<body class="container">
+<input type="hidden" id="template" value="<%= template %>"></input>
 
-  <header>
-    <% include ../partials/header %>
-  </header>
-
-  <main>
-    <div class="jumbotron">
-      <h1>Deploying</h1>
-      <p>From repo: <strong><%= template %><strong></p>
-      <textarea class="form-control" style="overflow-y: scroll;" rows="10" id="status"></textarea>
-      <div style="height:60px">
-        </br />
-        <p id="loginBlock" style="display: none;">Login: <a id="loginUrl" target="_blank" href=""></a></p>
-      </div>
-    </div>
-    
-  </main>
-
-  <input type="hidden" id="template" value="<%= template %>"></input>
-
-  <footer>
-    <% include ../partials/footer %>
-  </footer>
-
-</body>
-</html>
+<% include ../partials/footer %>

@@ -31,3 +31,6 @@ npm-debug.log
 
 # Environment settings
 .env
+
+# Generated files and dirs
+public/build
