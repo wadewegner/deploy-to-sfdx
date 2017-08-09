@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node .",
-    "css-build": "mkdirp public/build/assets/css && mkdirp public/build/assets/fonts && node-sass src/scss -o public/build/assets/css && ncp node_modules/@salesforce-ux/design-system/assets/fonts public/build/assets/fonts",
-    "css-watch": "node-sass --watch src/scss -o public/build/assets/css"
+    "css-build": "mkdirp dist/assets/css && mkdirp dist/assets/fonts && ncp src/assets dist/assets && node-sass src/scss -o dist/assets/css && ncp node_modules/@salesforce-ux/design-system/assets/fonts dist/assets/fonts",
+    "css-watch": "node-sass --watch src/scss -o dist/assets/css"
   },
   "repository": {
     "type": "git",
