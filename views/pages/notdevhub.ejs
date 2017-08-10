@@ -1,24 +1,27 @@
 <% include ../partials/head %>
 
-  <main>
-    <div class="jumbotron">
-      <h1>Not DevHub</h1><small>
-
-      <p>
-        Sorry, but it looks like the org you've logged into is not a <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth.htm" target="_blank">dev hub</a>.
-        Consequently, you cannot currently use <strong>Deploy to Salesforce DX</strong> to create a stratch org from a Github repo.
-      </p>
-      <p>To try this out, you have two options:</p>
-      <div>
-        <ol class="list-group">
-          <li class="list-group-item">Enable dev hub in a Production or Business Org (i.e. not a DE org). Search on “Dev Hub” from Setup and then click Enabled.</li>
-          <li class="list-group-item">Get a <a href="https://sfdc.co/DX-Trial-Org">30-day free trial.</a></li>
-        </ol>
+<main class="slds-card">
+    <div class="slds-notify_container slds-is-relative slds-m-top_small slds-m-bottom_large">
+      <div class="slds-notify slds-notify_toast slds-theme_warning" role="alert">
+        <span class="slds-assistive-text">warning</span>
+        <div class="slds-notify__content">
+          <h2 class="slds-text-heading_small ">Sorry, but it looks like the org you've logged into is not a <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth.htm" target="_blank">dev hub</a></h2>
+        </div>
       </div>
-        <p>Please try again once you've gotten this resolved.
-      </p>
-
     </div>
-  </main>
+
+    <p class="slds-m-bottom_medium">Consequently, you cannot currently use <strong>Deploy to Salesforce DX</strong> to create a stratch org from a Github repo.</p>
+
+    <p class="slds-m-bottom_medium">To try this out, you have two options:</p>
+
+    <ol class="slds-m-bottom_medium">
+      <li class="list-group-item">Enable dev hub in a Production or Business Org (i.e. not a DE org). Search on “Dev Hub” from Setup and then click Enabled.</li>
+      <li class="list-group-item">Get a <a href="https://sfdc.co/DX-Trial-Org">30-day free trial.</a></li>
+    </ol>
+
+    <p class="slds-m-bottom_medium">Please try again once you've gotten this resolved.</p>
+
+    <% include ../partials/actions %>
+</main>
 
 <% include ../partials/footer %>
