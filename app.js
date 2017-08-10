@@ -16,6 +16,7 @@ const consumerKey = process.env.CONSUMERKEY;
 const consumerSecret = process.env.CONSUMERSECRET;
 
 app.use('/scripts', express.static(`${__dirname}/scripts`));
+app.use('/dist', express.static(`${__dirname}/dist`));
 
 app.use(bodyParser.urlencoded({
   extended: true

@@ -1,0 +1,66 @@
+@import '../../node_modules/@salesforce-ux/design-system/scss/index';
+
+body {
+	width: 600px;
+	margin: 0 auto;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+a.sfdx-logo,
+a.sfdx-logo:hover,
+a.sfdx-logo:visited {
+	color: $color-text-default;
+}
+
+/* START SFDX Specific Styles */
+.sfdx-button_large {
+	width: 100%;
+	padding: $spacing-xx-small $spacing-medium;
+}
+
+.sfdx-output {
+	width: 100%;
+	height: 200px;
+	border-radius: $border-radius-small;
+	border: 1px solid $color-border;
+	padding: $spacing-small;
+	line-height: 1.5rem;
+	color: $color-text-input-disabled;
+	resize: none;
+}
+/* START SFDX Specific Styles */
+
+/* START SLDS Overrides */
+.slds-card {
+	padding: $spacing-medium $spacing-large;
+	background: $color-background-modal;
+}
+
+.slds-button + .slds-button {
+	margin-left: $spacing-medium;
+}
+
+.slds-notify_toast, .slds-notify--toast {
+	width: 100%;
+	min-width: 15rem;
+	margin: 0;
+}
+
+ol, ul {
+	list-style: inherit;
+	padding: 0 0 0 $spacing-large;
+}
+/* END SLDS Overrides */
+
+@media all and (max-width: 750px) {
+	html {
+		background: $color-background-modal;
+	}
+
+	.slds-card {
+		border: none;
+	}
+}
