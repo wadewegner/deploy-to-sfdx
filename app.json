@@ -1,0 +1,36 @@
+{
+  "name": "Deploy to Salesforce DX",
+  "description": "An application that will deploy an SFDX project from a public Github repo",
+  "repository": "https://github.com/wadewegner/deploy-to-sfdx",
+  "logo": "",
+  "keywords": ["deploy", "sfdx", "salesforcedx"],
+  "image": "",
+  "scripts": {
+    "postdeploy": "bin/deploy"
+  },
+  "env": {
+    "CALLBACKURL": {
+      "description": "The callback URL for your Connected App",
+      "value": ""
+    },
+    "CONSUMERKEY": {
+      "description": "The consumer key for your Connected App.",
+      "value": ""
+    },
+    "CONSUMERSECRET": {
+      "description": "The consumer secret for your Connected App.",
+      "value": ""
+    },
+    "STARTINGDIRECTORY": {
+      "description": "The base directory for the CLI",
+      "value": ""
+    }
+  },
+  "buildpacks": [{
+      "url": "https://github.com/wadewegner/salesforce-cli-buildpack"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}

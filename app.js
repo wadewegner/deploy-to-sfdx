@@ -160,6 +160,18 @@ app.get('/oauth/callback', (req, res) => {
 
 const router = express.Router();
 
+router.get('/test', (req, res) => {
+
+  const script = `jq --help`;
+
+  commands.run('test', script, (result) => {
+    res.json({
+      message: result
+    });
+  });
+
+});
+
 router.post('/deploying', (req, res) => {
 
   const command = req.body.command;
@@ -173,6 +185,8 @@ router.post('/deploying', (req, res) => {
   const startingDirectory = process.env.STARTINGDIRECTORY;
   const directory = `${tokenName}-${timestamp}`;
 
+  // const jqDirectory = '/app/.local/share/jq/bin/';
+
   let script;
   let sfdxurl;
 
@@ -182,7 +196,8 @@ router.post('/deploying', (req, res) => {
 
       script = `${startingDirectory}mkdir ${directory};cd ${directory};git clone ${param} .`;
 
-      commands.run(command, script, () => {
+      commands.run(command, script, (result) => {
+        console.log('temp result', result);
         res.json({
           message: `Successfully cloned ${param}`
         });
@@ -222,6 +237,18 @@ router.post('/deploying', (req, res) => {
       commands.run(command, script, (result) => {
         res.json({
           message: `Pushed source:\n\t${result}`
+        });
+      });
+
+      break;
+
+    case 'permset':
+
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:user:permset:assign -n ${param}`;
+
+      commands.run(command, script, (result) => {
+        res.json({
+          message: `Permset assigned:\n\t${result}`
         });
       });
 
