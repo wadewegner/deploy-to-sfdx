@@ -19395,6 +19395,15 @@ a.sfdx-logo:visited {
 .sfdx-slim {
   margin: 0 15%; }
 
+.sfdx-wrap {
+  word-wrap: break-word; }
+
+.slds-notify__content {
+  width: 100%; }
+
+.slds-notify_toast {
+  padding-right: 1.5rem; }
+
 /* END SFDX Specific Styles */
 /* START SLDS Overrides */
 .slds-card {
