@@ -33,4 +33,4 @@ npm-debug.log
 .env
 
 # Generated files and dirs
-dist
+# dist
