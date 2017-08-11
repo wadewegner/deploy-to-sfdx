@@ -17,4 +17,8 @@ sfdx update
 echo "Creating local resources ..."
 mkdir /app/tmp
 
+echo "Run css-build"
+npm run css-build
+
 echo "Completed!"
+
