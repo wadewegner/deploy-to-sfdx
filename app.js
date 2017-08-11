@@ -268,9 +268,10 @@ router.post('/deploying', (req, res) => {
 
     case 'url':
 
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result | jq -r .instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result | jq -r .accessToken)`;
-
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result.instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result.accessToken)`;
+      console.log('url script', script);
       commands.run(command, script, (result) => {
+        console.log('url result', result);
         res.json({
           message: `${result}`
         });
