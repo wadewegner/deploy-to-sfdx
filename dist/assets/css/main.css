@@ -19384,7 +19384,7 @@ a.sfdx-logo:visited {
 
 .sfdx-output {
   width: 100%;
-  height: 300px;
+  height: 350px;
   border-radius: 0.125rem;
   border: 1px solid #d8dde6;
   padding: 0.75rem;
@@ -19392,7 +19392,10 @@ a.sfdx-logo:visited {
   color: #54698d;
   resize: none; }
 
-/* START SFDX Specific Styles */
+.sfdx-slim {
+  margin: 0 15%; }
+
+/* END SFDX Specific Styles */
 /* START SLDS Overrides */
 .slds-card {
   padding: 1rem 1.5rem;
@@ -19414,5 +19417,12 @@ ol, ul {
 @media all and (max-width: 750px) {
   html {
     background: white; }
+  body {
+    width: 95%; }
   .slds-card {
-    border: none; } }
+    border: none; }
+  .sfdx-button_mobile {
+    width: auto;
+    margin: 0 1.5rem; }
+  .sfdx-slim {
+    margin: 0; } }

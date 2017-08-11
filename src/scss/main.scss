@@ -23,7 +23,7 @@ a.sfdx-logo:visited {
 
 .sfdx-output {
 	width: 100%;
-	height: 300px;
+	height: 350px;
 	border-radius: $border-radius-small;
 	border: 1px solid $color-border;
 	padding: $spacing-small;
@@ -31,7 +31,11 @@ a.sfdx-logo:visited {
 	color: $color-text-input-disabled;
 	resize: none;
 }
-/* START SFDX Specific Styles */
+
+.sfdx-slim {
+	margin:0 15%;
+}
+/* END SFDX Specific Styles */
 
 /* START SLDS Overrides */
 .slds-card {
@@ -60,7 +64,20 @@ ol, ul {
 		background: $color-background-modal;
 	}
 
+	body {
+		width: 95%;
+	}
+
 	.slds-card {
 		border: none;
+	}
+
+	.sfdx-button_mobile {
+		width: auto;
+		margin: 0 $spacing-large;
+	}
+
+	.sfdx-slim {
+		margin:0;
 	}
 }
