@@ -1,26 +1,44 @@
 <% include ../partials/head %>
-<script type="text/javascript" src="../../scripts/js-yaml.min.js"></script>
-<script type="text/javascript" src="../../scripts/deploying.js"></script>
+  <script type="text/javascript" src="../../scripts/js-yaml.min.js"></script>
+  <script type="text/javascript" src="../../scripts/deploying.js"></script>
 
-<main class="slds-card">
-  <h2 class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_medium sfdx-wrap">Deploying <strong><%= template %></strong></h2>
+  <main class="slds-card">
+    <h2 class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_medium sfdx-wrap">Deploying <strong><%= template %></strong></h2>
 
-	<div id="loginBlock" style="display: none;">
-		<div class="slds-notify_container slds-is-relative slds-m-bottom_large sfdx-wrap">
-		  <div class="slds-notify slds-notify_toast slds-theme_success" role="alert">
-		    <span class="slds-assistive-text">warning</span>
-		    <div class="slds-notify__content">
-					<h2 class="slds-text-heading_small ">Nice! <strong><%= template %></strong> has been deployed!</h2>
-					<br />
-					<h2 class="slds-text-heading_small ">You can access it at <strong><a id="loginUrl" target="_blank" href=""></a></strong></h2>
-		    </div>
-		  </div>
-		</div>
-	</div>
+    <div id="loginBlock" style="display: none;">
+      <div class="slds-notify_container slds-is-relative slds-m-bottom_large sfdx-wrap">
 
-  <textarea id="status" class="slds-m-bottom_small sfdx-output"></textarea>
-</main>
+        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
+          <span class="slds-assistive-text">warning</span>
+          <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
+            <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+            </svg>
+          </span>
+          <h2>It can take up to 5 minutes for the my domain DNS to propogate.</h2>
+          <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" title="Close">
+            <svg class="slds-button__icon" aria-hidden="true">
+              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+            </svg>
+            <span class="slds-assistive-text">Close</span>
+          </button>
+        </div>
 
-<input type="hidden" id="template" value="<%= template %>"></input>
+        <br />
 
-<% include ../partials/footer %>
+        <div class="slds-notify slds-notify_toast slds-theme_success" role="alert">
+          <span class="slds-assistive-text">warning</span>
+
+          <div class="slds-notify__content">
+            <h2 class="slds-text-heading_small ">Nice! Your app has been deployed! You can access it at: <strong><a id="loginUrl" target="_blank" href=""></a></strong></h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <textarea id="status" class="slds-m-bottom_small sfdx-output"></textarea>
+  </main>
+
+  <input type="hidden" id="template" value="<%= template %>"></input>
+
+  <% include ../partials/footer %>
