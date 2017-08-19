@@ -18,3 +18,4 @@ echo "Creating local resources ..."
 mkdir /app/tmp
 
 echo "Completed!"
+
