@@ -35,9 +35,8 @@ app.get('/about', (req, res) => {
 });
 
 app.get('/notdevhub', (req, res) => {
-  const template = req.query.template;
-  res.cookie('template', template);
 
+  const template = req.query.template;
   const user_name = req.cookies.user_name;
 
   res.render('pages/notdevhub', {
@@ -46,11 +45,17 @@ app.get('/notdevhub', (req, res) => {
   });
 });
 
+app.get('/choose', (req, res) => {
+  const user_name = req.cookies.user_name;
+
+  res.render('pages/choose', {
+    user_name: user_name
+  });
+});
+
 app.get('/deploy', (req, res) => {
+
   const template = req.query.template;
-
-  res.cookie('template', template);
-
   const access_token = req.cookies.access_token;
   const instance_url = req.cookies.instance_url;
   const user_name = req.cookies.user_name;
@@ -75,11 +80,14 @@ app.get('/deploying', (req, res) => {
 });
 
 app.get("/login", (req, res) => {
+
+  const template = req.query.template;
+  
   const uri = oauth2.getAuthorizationUrl({
     redirect_uri: callbackUrl,
     client_id: consumerKey,
     scope: 'id api refresh_token openid',
-    state: 'test123'
+    state: template
   });
   return res.redirect(uri);
 });
@@ -107,7 +115,7 @@ app.get('/logout', (req, res) => {
 
 app.get('/oauth/callback', (req, res) => {
   const authorizationCode = req.param('code');
-  // const state = req.param('state'); // TODO: use state and query instead of cookies
+  const template = req.param('state'); // TODO: use state and query instead of cookies
 
   oauth2.authenticate({
     redirect_uri: callbackUrl,
@@ -119,8 +127,6 @@ app.get('/oauth/callback', (req, res) => {
     res.cookie('access_token', payload.access_token);
     res.cookie('instance_url', payload.instance_url);
     res.cookie('refresh_token', payload.refresh_token);
-
-    console.log(payload);
 
     // check to see if org is a dev hub
     const conn = new jsforce.Connection({
@@ -140,18 +146,22 @@ app.get('/oauth/callback', (req, res) => {
           return console.error(err);
         }
 
-        const template = req.cookies.template;
+        //waw const template = req.cookies.template;
 
         if (result.size > 0) {
           const devHubEnabled = result.records[0].SettingValue;
 
           if (devHubEnabled === true) {
-            return res.redirect(`/deploy?template=${template}`);
+            if (template) {
+              return res.redirect(`/deploy?template=${template}`);
+            } else {
+              return res.redirect('/choose');
+            }
           } else {
-            return res.redirect(`/notdevhub?template=${template}`);
+            return res.redirect('/notdevhub');
           }
         } else {
-          return res.redirect(`/notdevhub?template=${template}`);
+          return res.redirect('/notdevhub');
         }
       });
     });
@@ -185,8 +195,6 @@ router.post('/deploying', (req, res) => {
   const startingDirectory = process.env.STARTINGDIRECTORY;
   const directory = `${tokenName}-${timestamp}`;
 
-  // const jqDirectory = '/app/.local/share/jq/bin/';
-
   let script;
   let sfdxurl;
 
@@ -197,7 +205,6 @@ router.post('/deploying', (req, res) => {
       script = `${startingDirectory}mkdir ${directory};cd ${directory};git clone ${param} .`;
 
       commands.run(command, script, (result) => {
-        console.log('temp result', result);
         res.json({
           message: `Successfully cloned ${param}`
         });
@@ -269,9 +276,8 @@ router.post('/deploying', (req, res) => {
     case 'url':
 
       script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result.instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result.accessToken)`;
-      console.log('url script', script);
+
       commands.run(command, script, (result) => {
-        console.log('url result', result);
         res.json({
           message: `${result}`
         });
