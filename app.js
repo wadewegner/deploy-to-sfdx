@@ -98,7 +98,7 @@ app.get("/login", (req, res) => {
   const uri = oauth2.getAuthorizationUrl({
     redirect_uri: callbackUrl,
     client_id: consumerKey,
-    scope: 'id api refresh_token openid',
+    scope: 'id api openid',
     state: template,
     prompt: 'select_account'
   });
