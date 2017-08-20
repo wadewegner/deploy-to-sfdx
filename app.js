@@ -26,6 +26,18 @@ app.set('view engine', 'ejs');
 
 app.use(cookieParser());
 
+app.get('*', (req, res, next) => {
+
+  // console.log('NODE_ENV', process.env.NODE_ENV);
+  // console.log('x-forwarded-proto', req.headers['x-forwarded-proto']);
+
+  if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
+    res.redirect(`https://deploy-to-sfdx.com/${req.url}`);
+  }
+
+  return next();
+});
+
 app.get('/', (req, res) => {
   res.render('pages/index', {});
 });
@@ -301,14 +313,6 @@ router.post('/deploying', (req, res) => {
 
 app.use('/api', router);
 
-// set up a route to redirect http to https
-app.get('*', (req, res) => {
-
-  if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
-    
-      res.redirect(`https://deploy-to-sfdx.com/${req.url}`);
-  }
-});
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
