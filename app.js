@@ -99,7 +99,8 @@ app.get("/login", (req, res) => {
     redirect_uri: callbackUrl,
     client_id: consumerKey,
     scope: 'id api refresh_token openid',
-    state: template
+    state: template,
+    prompt: 'select_account'
   });
   return res.redirect(uri);
 });
