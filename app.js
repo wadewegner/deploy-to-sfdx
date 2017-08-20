@@ -203,6 +203,7 @@ router.post('/deploying', (req, res) => {
   const access_token = req.cookies.access_token;
   const instance_url = req.cookies.instance_url;
   const refresh_token = req.cookies.refresh_token;
+  const user_name = req.cookies.user_name;
 
   const tokenName = access_token.replace(/\W/g, '');
   const startingDirectory = process.env.STARTINGDIRECTORY;
@@ -217,7 +218,7 @@ router.post('/deploying', (req, res) => {
 
       script = `${startingDirectory}mkdir ${directory};cd ${directory};git clone ${param} .`;
 
-      commands.run(command, script, (result) => {
+      commands.run(command, script, () => {
         res.json({
           message: `Successfully cloned ${param}`
         });
@@ -230,9 +231,9 @@ router.post('/deploying', (req, res) => {
       sfdxurl = `echo "force://${consumerKey}:${consumerSecret}:${refresh_token}@${instance_url}" > sfdx.key`;
       script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;${sfdxurl};sfdx force:auth:sfdxurl:store -f sfdx.key -d`;
 
-      commands.run(command, script, (result) => {
+      commands.run(command, script, () => {
         res.json({
-          message: `Authenticated to dev hub: ${result}`
+          message: `Authenticated to dev hub using ${user_name}.`
         });
       });
 
@@ -240,11 +241,21 @@ router.post('/deploying', (req, res) => {
 
     case 'create':
 
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:config:set instanceUrl=${instance_url};sfdx force:org:create -v '${access_token}' -s -f ${param}`;
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:config:set instanceUrl=${instance_url}`;
 
-      commands.run(command, script, (result) => {
-        res.json({
-          message: `Created scratch org: ${result}`
+      commands.run(command, script, () => {
+
+        script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:org:create -v '${access_token}' -s -f ${param}`;
+
+        commands.run(command, script, (result) => {
+          
+          let output = result;
+          output = output.replace(/\r?\n|\r/, ''); // remove newline
+          output = output.trim();
+          
+          res.json({
+            message: `${output}.`
+          });
         });
       });
 
@@ -252,11 +263,16 @@ router.post('/deploying', (req, res) => {
 
     case 'push':
 
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:source:push`;
+      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:source:push --json | jq '.result.pushedSource | length'`;
 
       commands.run(command, script, (result) => {
+        
+        let output = result;
+        output = output.replace(/\r?\n|\r/, ''); // remove newline
+        output = output.trim();
+
         res.json({
-          message: `Pushed source:\n\t${result}`
+          message: `Pushed ${output} source files.`
         });
       });
 
@@ -266,9 +282,9 @@ router.post('/deploying', (req, res) => {
 
       script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:user:permset:assign -n ${param}`;
 
-      commands.run(command, script, (result) => {
+      commands.run(command, script, () => {
         res.json({
-          message: `Permset assigned:\n\t${result}`
+          message: `Permset '${param}' assigned.`
         });
       });
 
@@ -279,8 +295,13 @@ router.post('/deploying', (req, res) => {
       script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
 
       commands.run(command, script, (result) => {
+        
+        let output = result;
+        output = output.replace(/\r?\n|\r/, ''); // remove newline
+        output = output.trim();
+        
         res.json({
-          message: `Apex tests: ${result}`
+          message: `Apex tests: ${output}.`
         });
       });
 
@@ -304,7 +325,7 @@ router.post('/deploying', (req, res) => {
 
       commands.run(command, script, () => {
         res.json({
-          message: 'Removed temp files and cleaned up'
+          message: 'Removed temp files and cleaned up.'
         });
       });
 

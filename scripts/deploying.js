@@ -33,8 +33,6 @@ $(document).ready(() => {
   let yamlFile = githubRepo.replace('github.com', 'raw.githubusercontent.com');
   yamlFile += '/master/.salesforcedx.yaml';
 
-  update_status(`Checking for ${yamlFile}`);
-
   $.ajax({
     url: yamlFile,
     type: 'GET',
@@ -112,7 +110,7 @@ $(document).ready(() => {
             return deployingApi('clean', timestamp)
               .then(() => {
 
-                message = `Finished. You have deploy the app to Salesforce DX!\n\n${message}`;
+                message = `Finished. You have deployed the app to Salesforce DX!\n\n${message}`;
                 $('textarea#status').val(message);
 
               });
