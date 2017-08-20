@@ -32,7 +32,7 @@ app.get('*', (req, res, next) => {
   // console.log('x-forwarded-proto', req.headers['x-forwarded-proto']);
 
   if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
-    res.redirect(`https://deploy-to-sfdx.com/${req.url}`);
+    res.redirect(`https://deploy-to-sfdx.com${req.url}`);
   }
 
   return next();
