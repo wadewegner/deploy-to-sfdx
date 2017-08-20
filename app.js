@@ -82,7 +82,7 @@ app.get('/deploying', (req, res) => {
 app.get("/login", (req, res) => {
 
   const template = req.query.template;
-  
+
   const uri = oauth2.getAuthorizationUrl({
     redirect_uri: callbackUrl,
     client_id: consumerKey,
@@ -300,6 +300,15 @@ router.post('/deploying', (req, res) => {
 });
 
 app.use('/api', router);
+
+// set up a route to redirect http to https
+app.get('*', (req, res) => {
+
+  if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
+    
+      res.redirect(`https://deploy-to-sfdx.com/${req.url}`);
+  }
+});
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
