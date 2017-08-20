@@ -2,10 +2,33 @@
 
 <% include ../partials/head %>
 
-<main class="sfdx-slim slds-card">
-  <a href="/">&lt; Back</a>
-  <h2 class="slds-text-heading_medium slds-p-top_medium">About</h2>
-  <p>More to come.</p>
-</main>
+  <div class="sfdx-slim">
+    <main class="slds-card slds-text-align_center">
+      <h2 class="slds-text-heading_medium slds-p-top_medium slds-m-bottom_small">Salesforce Deployment Made Easy</h2>
+      <img src="dist/assets/images/launch.png" alt="Salesforce.com Logo" title="Salesforce.com Logo" />
+      <p class="slds-m-top_small slds-m-bottom_small">
+        <strong>Deploy to Salesforce DX</strong> is a tool that can deploy an application to Salesforce directly from Github using
+        the techniques provided by Salesforce DX. When you login with your <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_enable_devhub.htm" target="_blank">Dev Hub</a>
+        credentials, you generate an access token that is used to create a scratch org and run all subsequent operations.
+        This access token is only used during the deployment process and is stored in a cookie; it is not stored anywhere else.
+      </p>
+      <p class="slds-m-top_small slds-m-bottom_small">
+        <strong>Deploy to Salesforce DX</strong> is a community project intended to help developers explore Salesforce DX. There is no official support but you can message
+        <a href="https://twitter.com/WadeWegner" target="_blank">@WadeWegner</a> for help. While every effort
+        is made to ensure it operates without error, <strong>please use at your own risk</strong>.
+      </p>
+      <p class="slds-m-top_small slds-m-bottom_small">
+        To learn more about Salesforce DX, take a look at these resources:<br />
+      </p>
+      <p class="slds-m-top_small slds-m-bottom_small">
+        <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup" target="_blank">Salesforce DX Setup Guide (Beta)</a><br />
+        <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev" target="_blank">Salesforce DX Developer Guide (Beta)</a><br />
+        <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference" target="_blank">Salesforce CLI Command Reference (Beta)</a><br />
+        <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_ide2.meta/sfdx_ide2" target="_blank">Force.com IDE 2 Developer Guide (Beta)</a><br />
+        <a href="https://success.salesforce.com/_ui/core/chatter/groups/GroupProfilePage?g=0F93A000000HTp1" target="_blank">Salesforce DX Beta Success Community Group</a>
+      </p>
 
-<% include ../partials/footer %>
+    </main>
+  </div>
+
+  <% include ../partials/footer %>
