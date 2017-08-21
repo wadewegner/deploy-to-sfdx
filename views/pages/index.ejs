@@ -5,7 +5,10 @@
 	  <h2 class="slds-text-heading_medium slds-p-top_medium slds-m-bottom_small">Salesforce Deployment Made Easy</h2>
 	  <img src="dist/assets/images/launch.png" alt="Salesforce.com Logo" title="Salesforce.com Logo" />
 	  <p class="slds-m-top_small slds-m-bottom_small">This application makes it easy to deploy a Salesforce DX app directly from Github into your Scratch Org.</p>
-	  <% include ../partials/actions %>
+		<% include ../partials/actions %>
+		
+		<p class="slds-m-top_small slds-m-bottom_small">Currently <%= deploymentCount %> successful deployments!</p>
+
 	</main>
 
 	<a class="slds-button slds-button_neutral slds-show slds-m-top_medium sfdx-button_large sfdx-button_mobile" href="/about">Learn More</a>

@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const oauth2 = require('salesforce-oauth2');
 const jsforce = require('jsforce');
 const commands = require('./lib/commands.js');
+const postgresHelper = require('./lib/postgres.js');
 
 const {
   exec
@@ -39,7 +40,15 @@ app.get('*', (req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.render('pages/index', {});
+
+  postgresHelper.getDeploymentCount().then((deploymentCountResult) => {
+
+    const deploymentCount = deploymentCountResult.rows[0].count;
+
+    res.render('pages/index', {
+      deploymentCount: deploymentCount
+    });
+  });
 });
 
 app.get('/about', (req, res) => {
@@ -216,15 +225,28 @@ router.post('/deploying', (req, res) => {
 
     case 'clone':
 
-      script = `${startingDirectory}mkdir ${directory};cd ${directory};git clone ${param} .`;
+      const insertQuery = `INSERT INTO deployments (username, repo) VALUES ('${user_name}', '${param}')`;
 
-      commands.run(command, script, () => {
-        res.json({
-          message: `Successfully cloned ${param}`
+      postgresHelper.insertDeployment(insertQuery).then((result) => {
+
+        console.log('insert', result);
+
+        script = `${startingDirectory}mkdir ${directory};cd ${directory};git clone ${param} .`;
+
+        commands.run(command, script, () => {
+          res.json({
+            message: `Successfully cloned ${param}`
+          });
         });
+
+        // break;
+
       });
 
       break;
+
+
+
 
     case 'auth':
 
@@ -248,11 +270,11 @@ router.post('/deploying', (req, res) => {
         script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:org:create -v '${access_token}' -s -f ${param}`;
 
         commands.run(command, script, (result) => {
-          
+
           let output = result;
           output = output.replace(/\r?\n|\r/, ''); // remove newline
           output = output.trim();
-          
+
           res.json({
             message: `${output}.`
           });
@@ -266,7 +288,7 @@ router.post('/deploying', (req, res) => {
       script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:source:push --json | jq '.result.pushedSource | length'`;
 
       commands.run(command, script, (result) => {
-        
+
         let output = result;
         output = output.replace(/\r?\n|\r/, ''); // remove newline
         output = output.trim();
@@ -295,11 +317,11 @@ router.post('/deploying', (req, res) => {
       script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
 
       commands.run(command, script, (result) => {
-        
+
         let output = result;
         output = output.replace(/\r?\n|\r/, ''); // remove newline
         output = output.trim();
-        
+
         res.json({
           message: `Apex tests: ${output}.`
         });
