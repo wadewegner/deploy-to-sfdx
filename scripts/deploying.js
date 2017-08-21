@@ -77,7 +77,7 @@ $(document).ready(() => {
           }
         })
         .then(() => {
-          return deployingApi('test', timestamp);
+          return deployingApi('test', timestamp, runApexTests);
         })
         .then(() => {
 

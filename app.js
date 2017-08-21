@@ -229,8 +229,6 @@ router.post('/deploying', (req, res) => {
 
       postgresHelper.insertDeployment(insertQuery).then((result) => {
 
-        console.log('insert', result);
-
         script = `${startingDirectory}mkdir ${directory};cd ${directory};git clone ${param} .`;
 
         commands.run(command, script, () => {
@@ -238,15 +236,9 @@ router.post('/deploying', (req, res) => {
             message: `Successfully cloned ${param}`
           });
         });
-
-        // break;
-
       });
 
       break;
-
-
-
 
     case 'auth':
 
@@ -313,6 +305,14 @@ router.post('/deploying', (req, res) => {
       break;
 
     case 'test':
+
+      if (!param) {
+        res.json({
+          message: 'No tests executed.'
+        });
+
+        break;
+      }
 
       script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
 
