@@ -29,9 +29,6 @@ app.use(cookieParser());
 
 app.get('*', (req, res, next) => {
 
-  // console.log('NODE_ENV', process.env.NODE_ENV);
-  // console.log('x-forwarded-proto', req.headers['x-forwarded-proto']);
-
   if (process.env.NODE_ENV === 'production' && req.headers['x-forwarded-proto'] !== 'https') {
     res.redirect(`https://deploy-to-sfdx.com${req.url}`);
   }
@@ -72,6 +69,11 @@ app.get('/choose', (req, res) => {
   res.render('pages/choose', {
     user_name: user_name
   });
+});
+
+app.get('/repo', (req, res) => {
+
+  res.render('pages/repo', {});
 });
 
 app.get('/deploy', (req, res) => {
@@ -148,7 +150,6 @@ app.get('/oauth/callback', (req, res) => {
 
     res.cookie('access_token', payload.access_token);
     res.cookie('instance_url', payload.instance_url);
-    res.cookie('refresh_token', payload.refresh_token);
 
     // check to see if org is a dev hub
     const conn = new jsforce.Connection({
@@ -167,8 +168,6 @@ app.get('/oauth/callback', (req, res) => {
         if (err) {
           return console.error(err);
         }
-
-        //waw const template = req.cookies.template;
 
         if (result.size > 0) {
           const devHubEnabled = result.records[0].SettingValue;
@@ -211,7 +210,6 @@ router.post('/deploying', (req, res) => {
   const param = req.body.param;
   const access_token = req.cookies.access_token;
   const instance_url = req.cookies.instance_url;
-  const refresh_token = req.cookies.refresh_token;
   const user_name = req.cookies.user_name;
 
   const tokenName = access_token.replace(/\W/g, '');
@@ -235,19 +233,6 @@ router.post('/deploying', (req, res) => {
           res.json({
             message: `Successfully cloned ${param}`
           });
-        });
-      });
-
-      break;
-
-    case 'auth':
-
-      sfdxurl = `echo "force://${consumerKey}:${consumerSecret}:${refresh_token}@${instance_url}" > sfdx.key`;
-      script = `${startingDirectory}cd ${directory};export FORCE_SHOW_SPINNER=;${sfdxurl};sfdx force:auth:sfdxurl:store -f sfdx.key -d`;
-
-      commands.run(command, script, () => {
-        res.json({
-          message: `Authenticated to dev hub using ${user_name}.`
         });
       });
 

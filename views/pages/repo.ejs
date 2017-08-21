@@ -1,0 +1,29 @@
+<% include ../partials/head %>
+
+<main class="sfdx-slim slds-card">
+
+  <h2 class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_medium">Want to try your own repo?</h2>
+  
+  <p class="slds-p-bottom_medium">It's easy. Just use the <img src="/dist/assets/images/DeployToSFDX.svg" /> button.</p>
+
+  <p class="slds-p-bottom_medium">Add the following source to your github repo (making sure to change the <code>template</code> to your repository:</p>
+
+  <code>
+      [![Deploy](https://deploy-to-sfdx.com/dist/assets/images/DeployToSFDX.svg)](https://deploy-to-sfdx.com/deploy?template=https://github.com/wadewegner/sfdx-simple)
+  </code>
+
+  <p class="slds-p-top_medium slds-p-bottom_medium">Next, create a <code>.salesforcedx.yaml</code> file in your repo:</p>
+
+  <code>
+    scratch-org-def: config/project-scratch-def.json<br />
+    assign-permset: false<br />
+    run-apex-tests: false<br />
+    delete-scratch-org: false<br />
+    show-scratch-org-url: true<br />
+  </code>
+    
+  <p class="slds-p-top_medium slds-p-bottom_medium">That's it! See the <a href="https://github.com/wadewegner/sfdx-simple/" target="_blank">https://github.com/wadewegner/sfdx-simple</a> for an example of the button in action!</p>
+
+</main>
+
+<% include ../partials/footer %>

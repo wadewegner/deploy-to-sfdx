@@ -10,7 +10,7 @@
       <%= user_name %>
     </p>
     <p>
-      <strong>Choose a Supported Repo</strong><br />
+      <strong>Choose a Repo</strong><br />
 
       <fieldset class="slds-form-element">
         <div class="slds-form-element__control">
@@ -18,14 +18,14 @@
             <input type="radio" id="radio-1" name="options" checked="checked" value="https://github.com/wadewegner/sfdx-dreamhouse">
             <label class="slds-radio__label" for="radio-1">
               <span class="slds-radio_faux"></span>
-          <span class="slds-form-element__label">https://github.com/wadewegner/sfdx-dreamhouse</span>
+          <span class="slds-form-element__label"><a href="https://github.com/wadewegner/sfdx-dreamhouse" target="_blank">https://github.com/wadewegner/sfdx-dreamhouse</a></span>
           </label>
           </span>
           <span class="slds-radio">
             <input type="radio" id="radio-2" name="options" value="https://github.com/wadewegner/sfdx-simple">
             <label class="slds-radio__label" for="radio-2">
               <span class="slds-radio_faux"></span>
-          <span class="slds-form-element__label">https://github.com/wadewegner/sfdx-simple</span>
+          <span class="slds-form-element__label"><a href="https://github.com/wadewegner/sfdx-simple" target="_blank">https://github.com/wadewegner/sfdx-simple</a></span>
           </label>
           </span>
 
@@ -33,7 +33,7 @@
               <input type="radio" id="radio-3" name="options" value="https://github.com/wadewegner/northern-trail">
               <label class="slds-radio__label" for="radio-3">
                 <span class="slds-radio_faux"></span>
-          <span class="slds-form-element__label">https://github.com/wadewegner/northern-trail</span>
+          <span class="slds-form-element__label"><a href="https://github.com/wadewegner/northern-trail" target="_blank">https://github.com/wadewegner/northern-trail</a></span>
           </label>
           </span>
         </div>
@@ -45,6 +45,14 @@
       <button type="button" class="slds-button slds-button_neutral sfdx-button_large" id="no">Cancel</button>
       <button type="button" class="slds-button slds-button_brand sfdx-button_large" id="yes">Deploy</button>
     </div>
+
+  </main>
+
+  <main class="sfdx-slim slds-card">
+
+    <h2 class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_medium">Want to try your own repo?</h2>
+    <p class="slds-p-bottom_medium">Just add the <img src="/dist/assets/images/DeployToSFDX.svg" /> button. <a href="/repo">Learn more</a>.</p>
+
   </main>
 
   <% include ../partials/footer %>
