@@ -158,7 +158,7 @@ app.get('/oauth/callback', (req, res) => {
       res.cookie('instance_url', payload.instance_url);
 
     } catch (e) {
-      console.err('payload.access_token undefined');
+      console.log('payload.access_token undefined');
       
       return res.redirect('/error');
     }
