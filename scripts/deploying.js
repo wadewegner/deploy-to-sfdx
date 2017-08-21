@@ -100,6 +100,7 @@ $(document).ready(() => {
               $('#loginUrl').attr('href', url);
               $('#loginUrl').text(`${url.substring(0, 80)}...`);
               $('#loginBlock').show();
+              $('div#loaderBlock').hide();
 
               // clean up
               commandData = {};
