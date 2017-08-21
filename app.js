@@ -52,6 +52,10 @@ app.get('/about', (req, res) => {
   res.render('pages/about');
 });
 
+app.get('/error', (req, res) => {
+  res.render('pages/error');
+});
+
 app.get('/notdevhub', (req, res) => {
 
   const template = req.query.template;
@@ -147,6 +151,12 @@ app.get('/oauth/callback', (req, res) => {
     client_secret: consumerSecret,
     code: authorizationCode
   }, (error, payload) => {
+
+    if (payload.access_token === undefined) {
+      console.err('payload.access_token undefined');
+
+      return res.redirect('/error');
+    }
 
     res.cookie('access_token', payload.access_token);
     res.cookie('instance_url', payload.instance_url);
