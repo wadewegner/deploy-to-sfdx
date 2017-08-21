@@ -111,7 +111,7 @@ $(document).ready(() => {
             return deployingApi('clean', timestamp)
               .then(() => {
 
-                message = `Finished. You have deployed the app to Salesforce DX!\n\n${message}`;
+                message = `Finished. You have deployed the app to your scratch org!\n\n${message}`;
                 $('textarea#status').val(message);
 
               });
