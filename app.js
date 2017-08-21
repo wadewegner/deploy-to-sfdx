@@ -152,14 +152,16 @@ app.get('/oauth/callback', (req, res) => {
     code: authorizationCode
   }, (error, payload) => {
 
-    if (payload.access_token === undefined) {
-      console.err('payload.access_token undefined');
+    try {
 
+      res.cookie('access_token', payload.access_token);
+      res.cookie('instance_url', payload.instance_url);
+
+    } catch (e) {
+      console.err('payload.access_token undefined');
+      
       return res.redirect('/error');
     }
-
-    res.cookie('access_token', payload.access_token);
-    res.cookie('instance_url', payload.instance_url);
 
     // check to see if org is a dev hub
     const conn = new jsforce.Connection({
