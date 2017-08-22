@@ -34,3 +34,5 @@ npm-debug.log
 
 # Generated files and dirs
 public
+
+tmp

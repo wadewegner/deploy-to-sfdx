@@ -3,10 +3,16 @@ $(document).ready(() => {
   let actionCount = 0;
   let message = '';
 
-  function update_status(newMessage) {
+  function update_status(newMessage, excludeCount) {
     actionCount += 1;
-    newMessage = newMessage.replace(/^\s+|\s+$/g, '');
-    message = `${actionCount}) ${newMessage}\n${message}`;
+
+    if (excludeCount) {
+      message = `${newMessage}\n${message}`;
+    } else {
+      newMessage = newMessage.replace(/^\s+|\s+$/g, '');
+      message = `${actionCount}) ${newMessage}\n${message}`;
+    }
+
     $('textarea#status').val(message);
   }
 
@@ -25,6 +31,10 @@ $(document).ready(() => {
       dataType: 'json',
       success: (commandDataResponse) => {
         update_status(`${commandDataResponse.message}`);
+      },
+      error: (commandDataResponse) => {
+        update_status(`Sorry, something went wrong. Please contact @WadeWegner on Twitter and send the following error message.\n\nError: ${commandDataResponse.responseText}\n`, true);
+        $('div#loaderBlock').hide();
       }
     });
   }
