@@ -3,6 +3,7 @@
 body {
 	width: 600px;
 	margin: 0 auto;
+	line-height: 1.5rem;
 }
 
 a:hover {
@@ -40,12 +41,17 @@ a.sfdx-logo:visited {
 	word-wrap: break-word;
 }
 
-.slds-notify__content {
-	width: 100%;
+.sfdx-note {
+	color: $color-text-browser-active;
 }
 
-.slds-notify_toast {
-	padding-right: $card-spacing-large;	
+.slds-card.sfdx-code {
+	width: 100%;
+	padding: $spacing-small;
+	font-family: monospace;
+	font-size: 1rem;
+	white-space: pre;
+	overflow: scroll;
 }
 /* END SFDX Specific Styles */
 
@@ -68,6 +74,14 @@ a.sfdx-logo:visited {
 ol, ul {
 	list-style: inherit;
 	padding: 0 0 0 $spacing-large;
+}
+
+.slds-notify__content {
+	width: 100%;
+}
+
+.slds-notify_toast {
+	padding-right: $card-spacing-large;	
 }
 /* END SLDS Overrides */
 
