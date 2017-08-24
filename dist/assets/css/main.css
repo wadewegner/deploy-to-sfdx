@@ -19367,7 +19367,8 @@ a.slds-button--inverse:focus {
 
 body {
   width: 600px;
-  margin: 0 auto; }
+  margin: 0 auto;
+  line-height: 1.5rem; }
 
 a:hover {
   text-decoration: none; }
@@ -19398,11 +19399,16 @@ a.sfdx-logo:visited {
 .sfdx-wrap {
   word-wrap: break-word; }
 
-.slds-notify__content {
-  width: 100%; }
+.sfdx-note {
+  color: rgba(0, 0, 0, 0.4); }
 
-.slds-notify_toast {
-  padding-right: 1.5rem; }
+.slds-card.sfdx-code {
+  width: 100%;
+  padding: 0.75rem;
+  font-family: monospace;
+  font-size: 1rem;
+  white-space: pre;
+  overflow: scroll; }
 
 /* END SFDX Specific Styles */
 /* START SLDS Overrides */
@@ -19421,6 +19427,12 @@ a.sfdx-logo:visited {
 ol, ul {
   list-style: inherit;
   padding: 0 0 0 1.5rem; }
+
+.slds-notify__content {
+  width: 100%; }
+
+.slds-notify_toast {
+  padding-right: 1.5rem; }
 
 /* END SLDS Overrides */
 @media all and (max-width: 750px) {

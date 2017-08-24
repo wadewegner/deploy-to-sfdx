@@ -3,29 +3,12 @@
   <script type="text/javascript" src="../../scripts/deploying.js"></script>
 
   <main class="slds-card">
-    <h2 class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_medium sfdx-wrap">Deploying <strong><%= template %></strong></h2>
+    <h2 id="loaderBlock" class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_medium sfdx-wrap"><img src="/dist/assets/images/loader.gif" style="width:27px;" /> Deploying <strong><%= template %></strong></h2>
 
     <div id="loginBlock" style="display: none;">
       <div class="slds-notify_container slds-is-relative slds-m-bottom_large sfdx-wrap">
 
-        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-          <span class="slds-assistive-text">warning</span>
-          <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
-            <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
-              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
-            </svg>
-          </span>
-          <h2>It can take up to 5 minutes for the my domain DNS to propogate.</h2>
-          <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" title="Close">
-            <svg class="slds-button__icon" aria-hidden="true">
-              <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
-            </svg>
-            <span class="slds-assistive-text">Close</span>
-          </button>
-        </div>
-
-        <br />
-
+        
         <div class="slds-notify slds-notify_toast slds-theme_success" role="alert">
           <span class="slds-assistive-text">warning</span>
 
@@ -34,32 +17,12 @@
           </div>
         </div>
 
-        <br />
-
-        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_warning" role="alert">
-          <span class="slds-assistive-text">warning</span>
-          <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Description of icon when needed">
-              <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
-                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
-              </svg>
-            </span>
-          <h2>If the scratch org doesn't load, refresh it in a few minutes.</h2>
-          <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" title="Close">
-              <svg class="slds-button__icon" aria-hidden="true">
-                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
-              </svg>
-              <span class="slds-assistive-text">Close</span>
-            </button>
-        </div>
+        <p class="slds-m-around_large"><strong>Note:</strong> It can take up to 5 minutes for the my domain DNS to propogate. If the scratch org doesn't load, refresh it in a few minutes.</p>
 
       </div>
     </div>
 
     <textarea id="status" class="slds-m-bottom_small sfdx-output"></textarea>
-
-    <div id="loaderBlock" style="text-align:center;">
-      <img src="/dist/assets/images/loader.gif" style="width:50px;" />
-    </div>
   </main>
 
   <input type="hidden" id="template" value="<%= template %>"></input>
