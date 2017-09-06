@@ -5,6 +5,12 @@
 	  <h2 class="slds-text-heading_medium slds-p-top_medium slds-m-bottom_small">Salesforce Deployment Made Easy</h2>
 	  <img src="dist/assets/images/launch.png" alt="Salesforce.com Logo" title="Salesforce.com Logo" width="174" />
 	  <p class="slds-m-top_small slds-m-bottom_small">This application makes it easy to deploy a Salesforce DX app directly from Github into your Scratch Org.</p>
+	  <% if (template) { %>
+	  <p>
+		<strong>From Repo</strong><br />
+		<a href="<%= template %>" target="_new"><%= template %></a>
+	  </p>
+	  <% } %>
 		<% include ../partials/actions %>
 		
 		<p class="slds-m-around_small">Need a Dev Hub org? Learn how to get one <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_enable_devhub.htm" target="_blank">here</a>.</p>
