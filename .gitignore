@@ -36,3 +36,6 @@ npm-debug.log
 public
 
 tmp
+cert.pem
+
+key.pem
