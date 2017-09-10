@@ -35,7 +35,7 @@ npm-debug.log
 # Generated files and dirs
 public
 
+# Local resources
 tmp
 cert.pem
-
 key.pem
