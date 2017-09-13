@@ -1,6 +1,6 @@
 # Deploy to Salesforce DX
 
-An open-source and community-driven tool for automating Salesforce DX deployments from public repositories to Scratch Orgs. You can us this tool by visiting [https://deploy-to-sfdx.com/](https://deploy-to-sfdx.com/) and logging in with your Dev Hub credentials.
+An open-source and community-driven tool for one-click Salesforce DX deployments from public repositories to Scratch Orgs. You can us this tool by visiting [https://deploy-to-sfdx.com/](https://deploy-to-sfdx.com/) and logging in with your Dev Hub credentials.
 
 ## Local Setup
 
