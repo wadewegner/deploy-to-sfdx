@@ -22,8 +22,6 @@ require('./lib/app-router')(router);
 
 app.use('/api', router);
 
-
-
 const port = process.env.PORT || 8443;
 
 // if local, use 8443 and certificate
