@@ -62,3 +62,32 @@ Once you have the above setup correctly, you can run by running `heroku local` a
 ## Updating SCSS or UX assets
 
 If you make changes to SCSS or UX assets, be sure you regenerate the `dist` files by running the command `npm run css-build`.
+
+## Supported .salesforcedx.yaml options
+
+``` yaml
+scratch-org-def: config/project-scratch-def.json #required in your repo
+assign-permset: true #requires the permset name below
+permset-name: CustomerID
+run-apex-tests: false #if true, runs all tests in the org
+delete-scratch-org: false #don't know what this does
+show-scratch-org-url: true #displays the url in the deployer app
+generate-password: true #auto-generates a password for the scratch org user
+execute-apex: #run apex scripts in parallel via execute anonymous.  These are not full classes
+  - scripts/CustomerIDSetup.cls
+  - scripts/helloWorld.cls
+```
+
+## One-click Option
+Rather than have users sign in with their own devhub credentials, this option lets you loan them scratch orgs from your hub, and also minimizes the clicks involved.
+
+environment (local or heroku)
+```
+HOSTED_ONE_CLICK=true
+```
+
+You need to set up your devhub's app so that it accepts the refresh_token scope.
+* `/hostedOneClick?template=init` lets you login to the devhub you wish to share
+* `/hostedOneClick?template=https://github.com/mshanemc/DF17integrationWorkshops` will immediately deploy that github repo
+
+Once set up for one-click, users can still use their normal hub using the normal pathway in `/`
