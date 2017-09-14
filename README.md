@@ -22,7 +22,7 @@ You'll need the following setup to run this project locally.
 
     - Note down the consumer key and consumer secret for later.
 
-4. Create a Postgres database in Heroku.
+4. Create a Postgres database in Heroku and a memachier service.  Memcachier has a [local option](https://devcenter.heroku.com/articles/memcachier#local-usage)
 
 5. Create the `deployments` table by running the `deployments.sql` script against your Postgres database.
 
@@ -43,11 +43,16 @@ DATABASE_URL=
 PASS_PHRASE=
 CERT_PEM=
 KEY_PEM=
+MEMCACHIER_PASSWORD=
+MEMCACHIER_SERVERS=
+MEMCACHIER_USERNAME=
 ```
 
 8. Get your Postgres `DATABASE_URL` by running `heroku config:get DATABASE_URL --app deploy-to-sfdx` and update.
 
-9. Create your own local certificates or use these defaults:
+9. Get your memcachier stuff from heroku config:get --app deploy-to-sfdx
+
+10. Create your own local certificates or use these defaults:
 
 ```
 PASS_PHRASE=test1234
