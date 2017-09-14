@@ -63,15 +63,31 @@ Once you have the above setup correctly, you can run by running `heroku local` a
 
 If you make changes to SCSS or UX assets, be sure you regenerate the `dist` files by running the command `npm run css-build`.
 
-## local link examples
-with template
-https://localhost:8443/hostedOneClick?template=https://github.com/mshanemc/LightningErrorHandler
+## Supported .yaml options
 
-without template (only doing login)
-https://localhost:8443/hostedOneClick?template=init
+``` yaml
+scratch-org-def: config/project-scratch-def.json #required
+assign-permset: true #requires the permset name below
+permset-name: CustomerID
+run-apex-tests: false #if true, runs all tests in the org
+delete-scratch-org: false #don't know what this does
+show-scratch-org-url: true #displays the url in the deployer app
+generate-password: true #auto-generates a password for the scratch org user
+execute-apex: #run apex scripts via execute anonymous.  THESE ARE NOT FULL CLASSES
+  - scripts/CustomerIDSetup.cls
+  - scripts/helloWorld.cls
+```
 
-original app
-https://deploy-to-sfdx.com/?template=https://github.com/mshanemc/LightningErrorHandler
+## One-click Option
+Rather than have users sign in with their own devhub credentials, this option lets you loan them scratch orgs from your hub, and also minimizes the clicks involved.
 
-workshop testing
-https://localhost:8443/hostedOneClick?template=https://github.com/mshanemc/DF17integrationWorkshops
+environment (local or heroku)
+```
+HOSTED_ONE_CLICK=true
+```
+
+You need to set up your devhub's app so that it accepts the refresh_token scope.
+* `/hostedOneClick?template=init` lets you login to the devhub you wish to share
+* `/hostedOneClick?template=https://github.com/mshanemc/DF17integrationWorkshops` will immediately deploy that github repo
+
+Once set up for one-click, users can still use their normal hub using the normal pathway in `/`
