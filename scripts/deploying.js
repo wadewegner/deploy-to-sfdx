@@ -1,4 +1,4 @@
-/* globals $,document */
+/* globals $,document, jsyaml */
 
 $(document).ready(() => {
 
@@ -46,12 +46,8 @@ $(document).ready(() => {
     const timestamp = new Date().getTime().toString();
 
     return deployingApi('clone', timestamp, githubRepo)
-      .then(() => {
-        return deployingApi('create', timestamp, yamlSettings.scratchOrgDef);
-      })
-      .then(() => {
-        return deployingApi('push', timestamp);
-      })
+      .then(() => deployingApi('create', timestamp, yamlSettings.scratchOrgDef))
+      .then(() => deployingApi('push', timestamp))
       .then(() => {
         if (yamlSettings.permsetName) {
           return deployingApi('permset', timestamp, yamlSettings.permsetName);
@@ -69,10 +65,15 @@ $(document).ready(() => {
           return null;
         }
       })
-      // TODO: generating user password
+      // generating user password
       .then(() => {
-        return deployingApi('test', timestamp, yamlSettings.runApexTests);
+        if (yamlSettings.generatePassword){
+          return deployingApi('password', timestamp);
+        } else {
+          return null;
+        }
       })
+      .then(() => deployingApi('test', timestamp, yamlSettings.runApexTests))
       .then(() => {
 
         // generate url
@@ -148,7 +149,6 @@ $(document).ready(() => {
       update_status(`Discovered ${yamlFile}`);
 
       const doc = jsyaml.load(yamlFileDataResponse);
-      //console.log(doc);
 
       yamlSettings.assignPermset = doc['assign-permset'];
       yamlSettings.permsetName = doc['permset-name'];
@@ -157,6 +157,7 @@ $(document).ready(() => {
       yamlSettings.scratchOrgDef = doc['scratch-org-def'];
       yamlSettings.showScratchOrgUrl = doc['show-scratch-org-url'];
       yamlSettings.executeApex = doc['execute-apex'];
+      yamlSettings.generatePassword = doc['generate-password'];
 
       update_status(`Parsed the following values from the yaml file:
 \tassign-permset: ${yamlSettings.assignPermset}
@@ -165,6 +166,7 @@ $(document).ready(() => {
 \trun-apex-tests: ${yamlSettings.runApexTests}
 \tscratch-org-def: ${yamlSettings.scratchOrgDef}
 \texecute-apex: ${yamlSettings.executeApex}
+\tgenerate-password: ${yamlSettings.generatePassword}
 \tshow-scratch-org-url: ${yamlSettings.showScratchOrgUrl}`);
 
       deploy(yamlSettings, githubRepo);
