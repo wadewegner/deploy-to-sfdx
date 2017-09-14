@@ -62,3 +62,16 @@ Once you have the above setup correctly, you can run by running `heroku local` a
 ## Updating SCSS or UX assets
 
 If you make changes to SCSS or UX assets, be sure you regenerate the `dist` files by running the command `npm run css-build`.
+
+## local link examples
+with template
+https://localhost:8443/hostedOneClick?template=https://github.com/mshanemc/LightningErrorHandler
+
+without template (only doing login)
+https://localhost:8443/hostedOneClick?template=init
+
+original app
+https://deploy-to-sfdx.com/?template=https://github.com/mshanemc/LightningErrorHandler
+
+workshop testing
+https://localhost:8443/hostedOneClick?template=https://github.com/mshanemc/DF17integrationWorkshops

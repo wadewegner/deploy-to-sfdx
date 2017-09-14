@@ -1,3 +1,5 @@
+/* globals $,document */
+
 $(document).ready(() => {
 
   let actionCount = 0;
@@ -57,6 +59,17 @@ $(document).ready(() => {
           return null;
         }
       })
+      // TODO: installing packages
+      // TODO: loading data
+      // executing apex
+      .then(() => {
+        if (yamlSettings.executeApex){
+          return deployingApi('apex', timestamp, yamlSettings.executeApex);
+        } else {
+          return null;
+        }
+      })
+      // TODO: generating user password
       .then(() => {
         return deployingApi('test', timestamp, yamlSettings.runApexTests);
       })
@@ -117,6 +130,7 @@ $(document).ready(() => {
       yamlSettings.runApexTests = 'false';
       yamlSettings.scratchOrgDef = 'config/project-scratch-def.json';
       yamlSettings.showScratchOrgUrl = 'true';
+      yamlSettings.executeApex = [];
 
       update_status(`Didn't find a .salesforcedx.yaml file. Using defaults:
 \tassign-permset: ${yamlSettings.assignPermset}
@@ -134,6 +148,7 @@ $(document).ready(() => {
       update_status(`Discovered ${yamlFile}`);
 
       const doc = jsyaml.load(yamlFileDataResponse);
+      //console.log(doc);
 
       yamlSettings.assignPermset = doc['assign-permset'];
       yamlSettings.permsetName = doc['permset-name'];
@@ -141,6 +156,7 @@ $(document).ready(() => {
       yamlSettings.runApexTests = doc['run-apex-tests'];
       yamlSettings.scratchOrgDef = doc['scratch-org-def'];
       yamlSettings.showScratchOrgUrl = doc['show-scratch-org-url'];
+      yamlSettings.executeApex = doc['execute-apex'];
 
       update_status(`Parsed the following values from the yaml file:
 \tassign-permset: ${yamlSettings.assignPermset}
@@ -148,6 +164,7 @@ $(document).ready(() => {
 \tdelete-scratch-org: ${yamlSettings.deleteScratchOrg}
 \trun-apex-tests: ${yamlSettings.runApexTests}
 \tscratch-org-def: ${yamlSettings.scratchOrgDef}
+\texecute-apex: ${yamlSettings.executeApex}
 \tshow-scratch-org-url: ${yamlSettings.showScratchOrgUrl}`);
 
       deploy(yamlSettings, githubRepo);
