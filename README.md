@@ -63,17 +63,17 @@ Once you have the above setup correctly, you can run by running `heroku local` a
 
 If you make changes to SCSS or UX assets, be sure you regenerate the `dist` files by running the command `npm run css-build`.
 
-## Supported .yaml options
+## Supported .salesforcedx.yaml options
 
 ``` yaml
-scratch-org-def: config/project-scratch-def.json #required
+scratch-org-def: config/project-scratch-def.json #required in your repo
 assign-permset: true #requires the permset name below
 permset-name: CustomerID
 run-apex-tests: false #if true, runs all tests in the org
 delete-scratch-org: false #don't know what this does
 show-scratch-org-url: true #displays the url in the deployer app
 generate-password: true #auto-generates a password for the scratch org user
-execute-apex: #run apex scripts via execute anonymous.  THESE ARE NOT FULL CLASSES
+execute-apex: #run apex scripts in parallel via execute anonymous.  These are not full classes
   - scripts/CustomerIDSetup.cls
   - scripts/helloWorld.cls
 ```
