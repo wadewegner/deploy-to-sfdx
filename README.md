@@ -96,3 +96,5 @@ You need to set up your devhub's app so that it accepts the refresh_token scope.
 * `/hostedOneClick?template=https://github.com/mshanemc/DF17integrationWorkshops` will immediately deploy that github repo
 
 Once set up for one-click, users can still use their normal hub using the normal pathway in `/`
+
+One-click uses memcachier/memjs to store the login information, including the refresh token.  This lets the app retain that info across shutdowns, startups, scale-outs, and heroku maintenance process.  To clear the cache, flush it from the add-on...there's no functionality for that built into the app itself.
