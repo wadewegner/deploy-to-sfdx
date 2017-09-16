@@ -47,7 +47,23 @@ $(document).ready(() => {
 
     return deployingApi('clone', timestamp, githubRepo)
       .then(() => deployingApi('create', timestamp, yamlSettings.scratchOrgDef))
+      // anything that needs to be installed before the source (dependencies!)
+      .then(() => {
+        if (yamlSettings.packagesPre){
+          return deployingApi('packages', timestamp, yamlSettings.packagesPre);
+        } else {
+          return null;
+        }
+      })
       .then(() => deployingApi('push', timestamp))
+      // anything that can be installed after the source goes in (things that depend on the source!)
+      .then(() => {
+        if (yamlSettings.packagesPost){
+          return deployingApi('packages', timestamp, yamlSettings.packagesPost);
+        } else {
+          return null;
+        }
+      })
       .then(() => {
         if (yamlSettings.permsetName) {
           return deployingApi('permset', timestamp, yamlSettings.permsetName);
@@ -55,8 +71,14 @@ $(document).ready(() => {
           return null;
         }
       })
-      // TODO: installing packages
       // TODO: loading data
+      .then(() => {
+        if (yamlSettings.dataImport){
+          return deployingApi('data', timestamp, yamlSettings.dataImport);
+        } else {
+          return null;
+        }
+      })
       // executing apex
       .then(() => {
         if (yamlSettings.executeApex){
@@ -158,6 +180,9 @@ $(document).ready(() => {
       yamlSettings.showScratchOrgUrl = doc['show-scratch-org-url'];
       yamlSettings.executeApex = doc['execute-apex'];
       yamlSettings.generatePassword = doc['generate-password'];
+      yamlSettings.dataImport = doc['data-import'];
+      yamlSettings.packagesPre = doc['package-pre-source'];
+      yamlSettings.packagesPost = doc['package-post-source'];
 
       update_status(`Parsed the following values from the yaml file:
 \tassign-permset: ${yamlSettings.assignPermset}
@@ -166,6 +191,9 @@ $(document).ready(() => {
 \trun-apex-tests: ${yamlSettings.runApexTests}
 \tscratch-org-def: ${yamlSettings.scratchOrgDef}
 \texecute-apex: ${yamlSettings.executeApex}
+\tpackage-pre-source: ${yamlSettings.packagesPre}
+\tpackage-post-source: ${yamlSettings.packagesPost}
+\tdata-import: ${yamlSettings.dataImport}
 \tgenerate-password: ${yamlSettings.generatePassword}
 \tshow-scratch-org-url: ${yamlSettings.showScratchOrgUrl}`);
 

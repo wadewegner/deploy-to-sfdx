@@ -78,7 +78,14 @@ run-apex-tests: false #if true, runs all tests in the org
 delete-scratch-org: false #don't know what this does
 show-scratch-org-url: true #displays the url in the deployer app
 generate-password: true #auto-generates a password for the scratch org user
-execute-apex: #run apex scripts in parallel via execute anonymous.  These are not full classes
+package-pre-source : #install, in this order, packages BEFORE the source is pushed
+  - 04tB0000000Ln7i #package Id
+package-post-source : #install, in this order, packages AFTER the source is pushed
+  - 04tB0000000Ln7i #package Id
+data-import : #execute data:treei:import plans in the specified order
+  - data/somePlan.json
+  - data/nextPlan.json
+execute-apex: #run apex scripts in series via execute anonymous.  These are not full classes
   - scripts/CustomerIDSetup.cls
   - scripts/helloWorld.cls
 ```
