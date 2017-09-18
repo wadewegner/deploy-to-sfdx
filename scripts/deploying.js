@@ -50,8 +50,10 @@ $(document).ready(() => {
       // anything that needs to be installed before the source (dependencies!)
       .then(() => {
         if (yamlSettings.packagesPre){
+          console.log("loading pre packages");
           return deployingApi('packages', timestamp, yamlSettings.packagesPre);
         } else {
+          console.log("no pre packages");
           return null;
         }
       })
@@ -59,13 +61,16 @@ $(document).ready(() => {
       // anything that can be installed after the source goes in (things that depend on the source!)
       .then(() => {
         if (yamlSettings.packagesPost){
+          console.log("loading post packages");
           return deployingApi('packages', timestamp, yamlSettings.packagesPost);
         } else {
+          console.log("no post packages");
           return null;
         }
       })
       .then(() => {
         if (yamlSettings.permsetName) {
+          console.log("doing permset Assign");
           return deployingApi('permset', timestamp, yamlSettings.permsetName);
         } else {
           return null;
@@ -76,23 +81,33 @@ $(document).ready(() => {
       // loading data
       .then(() => {
         if (yamlSettings.executeApex){
+          console.log("doing pre-load apex");
+
           return deployingApi('apex', timestamp, yamlSettings.executeApex);
         } else {
+          console.log("no pre-load apex");
+
           return null;
         }
       })
       .then(() => {
         if (yamlSettings.dataImport){
+          console.log("doing data import");
+
           return deployingApi('data', timestamp, yamlSettings.dataImport);
         } else {
+          console.log("no data import");
           return null;
         }
       })
       // executing apex post import
       .then(() => {
         if (yamlSettings.executeApex){
+          console.log("doing post import apex");
+
           return deployingApi('apex', timestamp, yamlSettings.executeApexPost);
         } else {
+          console.log("no post import apex");
           return null;
         }
       })
