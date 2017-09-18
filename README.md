@@ -22,7 +22,7 @@ You'll need the following setup to run this project locally.
 
     - Note down the consumer key and consumer secret for later.
 
-4. Create a Postgres database in Heroku.
+4. Create a Postgres database in Heroku and a memachier service.  Memcachier has a [local option](https://devcenter.heroku.com/articles/memcachier#local-usage)
 
 5. Create the `deployments` table by running the `deployments.sql` script against your Postgres database.
 
@@ -43,11 +43,16 @@ DATABASE_URL=
 PASS_PHRASE=
 CERT_PEM=
 KEY_PEM=
+MEMCACHIER_PASSWORD=
+MEMCACHIER_SERVERS=
+MEMCACHIER_USERNAME=
 ```
 
 8. Get your Postgres `DATABASE_URL` by running `heroku config:get DATABASE_URL --app deploy-to-sfdx` and update.
 
-9. Create your own local certificates or use these defaults:
+9. Get your memcachier stuff from heroku config:get --app deploy-to-sfdx
+
+10. Create your own local certificates or use these defaults:
 
 ```
 PASS_PHRASE=test1234
@@ -62,3 +67,44 @@ Once you have the above setup correctly, you can run by running `heroku local` a
 ## Updating SCSS or UX assets
 
 If you make changes to SCSS or UX assets, be sure you regenerate the `dist` files by running the command `npm run css-build`.
+
+## Supported .salesforcedx.yaml options
+
+``` yaml
+scratch-org-def: config/project-scratch-def.json # required in your repo
+assign-permset: true # requires the permset name below
+permset-name: CustomerID
+run-apex-tests: false # if true, runs all tests in the org
+delete-scratch-org: false # don't know what this does
+show-scratch-org-url: true # displays the url in the deployer app
+generate-password: true # auto-generates a password for the scratch org user
+package-pre-source : # install, in this order, packages BEFORE the source is pushed
+  - 04tB0000000Ln7i #package Id
+package-post-source : # install, in this order, packages AFTER the source is pushed
+  - 04tB0000000Ln7i #package Id
+data-import : # execute data:treei:import plans in the specified order
+  - data/somePlan.json
+  - data/nextPlan.json
+execute-apex: # run apex scripts in series via execute anonymous before importing data.  These are not full classes
+  - scripts/CustomerIDSetup.cls
+  - scripts/helloWorld.cls
+execute-apex-post-import: # runs after any data import plans
+  - scripts/CustomerIDSetup.cls
+  - scripts/helloWorld.cls
+```
+
+## One-click Option
+Rather than have users sign in with their own devhub credentials, this option lets you loan them scratch orgs from your hub, and also minimizes the clicks involved.
+
+environment (local or heroku)
+```
+HOSTED_ONE_CLICK=true
+```
+
+You need to set up your devhub's app so that it accepts the refresh_token scope.
+* `/hostedOneClick?template=init` lets you login to the devhub you wish to share
+* `/hostedOneClick?template=https://github.com/mshanemc/DF17integrationWorkshops` will immediately deploy that github repo
+
+Once set up for one-click, users can still use their normal hub using the normal pathway in `/`
+
+One-click uses memcachier/memjs to store the login information, including the refresh token.  This lets the app retain that info across shutdowns, startups, scale-outs, and heroku maintenance process.  To clear the cache, flush it from the add-on...there's no functionality for that built into the app itself.
