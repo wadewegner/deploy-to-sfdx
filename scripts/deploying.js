@@ -20,6 +20,9 @@ $(document).ready(() => {
 
   function deployingApi(command, timestamp, param) {
 
+    console.log(command);
+    console.log(param);
+
     const commandData = {};
     commandData.command = command;
     commandData.timestamp = timestamp;
