@@ -56,7 +56,12 @@ $(document).ready(() => {
       // anything that needs to be installed before the source (dependencies!)
       .then(() => {
         if (yamlSettings.packagesPre){
-          return deployingApi('packages', timestamp, yamlSettings.packagesPre);
+          let requests = [];
+          for (let pkg of yamlSettings.packagesPre){
+            requests.push(deployingApi('package', timestamp, pkg));
+          }
+          return Promise.all(requests);
+          // return deployingApi('package', timestamp, yamlSettings.packagesPre);
         } else {
           return null;
         }
