@@ -61,7 +61,6 @@ $(document).ready(() => {
             requests.push(deployingApi('package', timestamp, pkg));
           }
           return Promise.all(requests);
-          // return deployingApi('package', timestamp, yamlSettings.packagesPre);
         } else {
           return null;
         }
@@ -71,7 +70,11 @@ $(document).ready(() => {
       .then(() => {
         console.log('trying packages post');
         if (yamlSettings.packagesPost){
-          return deployingApi('packages', timestamp, yamlSettings.packagesPost);
+          let requests = [];
+          for (let pkg of yamlSettings.packagesPost){
+            requests.push(deployingApi('package', timestamp, pkg));
+          }
+          return Promise.all(requests);
         } else {
           return null;
         }
@@ -88,22 +91,34 @@ $(document).ready(() => {
       // loading data
       .then(() => {
         if (yamlSettings.executeApex){
-          return deployingApi('apex', timestamp, yamlSettings.executeApex);
+          let requests = [];
+          for (let apex of yamlSettings.executeApex){
+            requests.push(deployingApi('apex', timestamp, apex));
+          }
+          return Promise.all(requests);
         } else {
           return null;
         }
       })
       .then(() => {
         if (yamlSettings.dataImport){
-          return deployingApi('data', timestamp, yamlSettings.dataImport);
+          let requests = [];
+          for (let data of yamlSettings.dataImport){
+            requests.push(deployingApi('data', timestamp, data));
+          }
+          return Promise.all(requests);
         } else {
           return null;
         }
       })
       // executing apex post import
       .then(() => {
-        if (yamlSettings.executeApex){
-          return deployingApi('apex', timestamp, yamlSettings.executeApexPost);
+        if (yamlSettings.executeApexPost){
+          let requests = [];
+          for (let apex of yamlSettings.executeApexPost){
+            requests.push(deployingApi('apex', timestamp, apex));
+          }
+          return Promise.all(requests);
         } else {
           return null;
         }
