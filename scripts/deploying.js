@@ -47,6 +47,18 @@ $(document).ready(() => {
     });
   }
 
+  function runArray(theArray, command){
+    if (theArray){
+      let requests = [];
+      for (let item of theArray){
+        requests.push(deployingApi(command, timestamp, item));
+      }
+      return Promise.all(requests);
+    } else {
+      return null;
+    }
+  }
+
   function deploy(yamlSettings, githubRepo) {
 
     const timestamp = new Date().getTime().toString();
@@ -68,7 +80,6 @@ $(document).ready(() => {
       .then(() => deployingApi('push', timestamp))
       // anything that can be installed after the source goes in (things that depend on the source!)
       .then(() => {
-        console.log('trying packages post');
         if (yamlSettings.packagesPost){
           let requests = [];
           for (let pkg of yamlSettings.packagesPost){
