@@ -47,7 +47,7 @@ $(document).ready(() => {
     });
   }
 
-  function runArray(theArray, command){
+  function runArray(theArray, timestamp, command){
     if (theArray){
       let requests = [];
       for (let item of theArray){
@@ -67,7 +67,7 @@ $(document).ready(() => {
       .then(() => deployingApi('create', timestamp, yamlSettings.scratchOrgDef))
       // anything that needs to be installed before the source (dependencies!)
       .then(() => {
-        return runArray(yamlSettings.packagesPre, 'package');
+        return runArray(yamlSettings.packagesPre, timestamp, 'package');
         // if (yamlSettings.packagesPre){
         //   let requests = [];
         //   for (let pkg of yamlSettings.packagesPre){
@@ -81,7 +81,7 @@ $(document).ready(() => {
       .then(() => deployingApi('push', timestamp))
       // anything that can be installed after the source goes in (things that depend on the source!)
       .then(() => {
-        return runArray(yamlSettings.packagesPost, 'package');
+        return runArray(yamlSettings.packagesPost, timestamp, 'package');
 
         // if (yamlSettings.packagesPost){
         //   let requests = [];
@@ -104,7 +104,7 @@ $(document).ready(() => {
       // start of data/scripting
       // loading data
       .then(() => {
-        return runArray(yamlSettings.executeApex, 'apex');
+        return runArray(yamlSettings.executeApex, timestamp, 'apex');
 
         // if (yamlSettings.executeApex){
         //   let requests = [];
@@ -117,7 +117,7 @@ $(document).ready(() => {
         // }
       })
       .then(() => {
-        return runArray(yamlSettings.dataImport, 'data');
+        return runArray(yamlSettings.dataImport, timestamp, 'data');
 
         // if (yamlSettings.dataImport){
         //   let requests = [];
@@ -131,7 +131,7 @@ $(document).ready(() => {
       })
       // executing apex post import
       .then(() => {
-        return runArray(yamlSettings.executeApexPost, 'apex');
+        return runArray(yamlSettings.executeApexPost, timestamp, 'apex');
 
         // if (yamlSettings.executeApexPost){
         //   let requests = [];
