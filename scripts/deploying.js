@@ -20,11 +20,11 @@ $(document).ready(() => {
 
   function deployingApi(command, timestamp, param) {
 
-
-    const commandData = {};
-    commandData.command = command;
-    commandData.timestamp = timestamp;
-    commandData.param = param;
+    const commandData = {
+      command,
+      timestamp,
+      param
+    };
 
     return $.ajax({
       type: 'POST',
@@ -37,10 +37,6 @@ $(document).ready(() => {
         update_status(`${commandDataResponse.message}`);
       },
       error: (commandDataResponse) => {
-        console.log(commandDataResponse);
-        console.log('what failed');
-        console.log(command);
-        console.log(param);
         update_status(`Sorry, something went wrong. Please contact @WadeWegner on Twitter and send the following error message.\n\nError: ${commandDataResponse.responseText}\n`, true);
         $('div#loaderBlock').hide();
       }
@@ -68,30 +64,11 @@ $(document).ready(() => {
       // anything that needs to be installed before the source (dependencies!)
       .then(() => {
         return runArray(yamlSettings.packagesPre, timestamp, 'package');
-        // if (yamlSettings.packagesPre){
-        //   let requests = [];
-        //   for (let pkg of yamlSettings.packagesPre){
-        //     requests.push(deployingApi('package', timestamp, pkg));
-        //   }
-        //   return Promise.all(requests);
-        // } else {
-        //   return null;
-        // }
       })
       .then(() => deployingApi('push', timestamp))
       // anything that can be installed after the source goes in (things that depend on the source!)
       .then(() => {
         return runArray(yamlSettings.packagesPost, timestamp, 'package');
-
-        // if (yamlSettings.packagesPost){
-        //   let requests = [];
-        //   for (let pkg of yamlSettings.packagesPost){
-        //     requests.push(deployingApi('package', timestamp, pkg));
-        //   }
-        //   return Promise.all(requests);
-        // } else {
-        //   return null;
-        // }
       })
       .then(() => {
         if (yamlSettings.permsetName) {
@@ -105,43 +82,13 @@ $(document).ready(() => {
       // loading data
       .then(() => {
         return runArray(yamlSettings.executeApex, timestamp, 'apex');
-
-        // if (yamlSettings.executeApex){
-        //   let requests = [];
-        //   for (let apex of yamlSettings.executeApex){
-        //     requests.push(deployingApi('apex', timestamp, apex));
-        //   }
-        //   return Promise.all(requests);
-        // } else {
-        //   return null;
-        // }
       })
       .then(() => {
         return runArray(yamlSettings.dataImport, timestamp, 'data');
-
-        // if (yamlSettings.dataImport){
-        //   let requests = [];
-        //   for (let data of yamlSettings.dataImport){
-        //     requests.push(deployingApi('data', timestamp, data));
-        //   }
-        //   return Promise.all(requests);
-        // } else {
-        //   return null;
-        // }
       })
       // executing apex post import
       .then(() => {
         return runArray(yamlSettings.executeApexPost, timestamp, 'apex');
-
-        // if (yamlSettings.executeApexPost){
-        //   let requests = [];
-        //   for (let apex of yamlSettings.executeApexPost){
-        //     requests.push(deployingApi('apex', timestamp, apex));
-        //   }
-        //   return Promise.all(requests);
-        // } else {
-        //   return null;
-        // }
       })
       // testing
       .then(() => deployingApi('test', timestamp, yamlSettings.runApexTests))
