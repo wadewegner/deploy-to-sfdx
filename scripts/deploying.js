@@ -35,6 +35,7 @@ $(document).ready(() => {
         update_status(`${commandDataResponse.message}`);
       },
       error: (commandDataResponse) => {
+        console.log(commandDataResponse);
         update_status(`Sorry, something went wrong. Please contact @WadeWegner on Twitter and send the following error message.\n\nError: ${commandDataResponse.responseText}\n`, true);
         $('div#loaderBlock').hide();
       }
@@ -50,27 +51,28 @@ $(document).ready(() => {
       // anything that needs to be installed before the source (dependencies!)
       .then(() => {
         if (yamlSettings.packagesPre){
-          console.log("loading pre packages");
+          console.log('loading pre packages');
           return deployingApi('packages', timestamp, yamlSettings.packagesPre);
         } else {
-          console.log("no pre packages");
+          console.log('no pre packages');
           return null;
         }
       })
       .then(() => deployingApi('push', timestamp))
       // anything that can be installed after the source goes in (things that depend on the source!)
       .then(() => {
+        console.log('trying packages post');
         if (yamlSettings.packagesPost){
-          console.log("loading post packages");
+          console.log('loading post packages');
           return deployingApi('packages', timestamp, yamlSettings.packagesPost);
         } else {
-          console.log("no post packages");
+          console.log('no post packages');
           return null;
         }
       })
       .then(() => {
         if (yamlSettings.permsetName) {
-          console.log("doing permset Assign");
+          console.log('doing permset Assign');
           return deployingApi('permset', timestamp, yamlSettings.permsetName);
         } else {
           return null;
@@ -81,33 +83,33 @@ $(document).ready(() => {
       // loading data
       .then(() => {
         if (yamlSettings.executeApex){
-          console.log("doing pre-load apex");
+          console.log('doing pre-load apex');
 
           return deployingApi('apex', timestamp, yamlSettings.executeApex);
         } else {
-          console.log("no pre-load apex");
+          console.log('no pre-load apex');
 
           return null;
         }
       })
       .then(() => {
         if (yamlSettings.dataImport){
-          console.log("doing data import");
+          console.log('doing data import');
 
           return deployingApi('data', timestamp, yamlSettings.dataImport);
         } else {
-          console.log("no data import");
+          console.log('no data import');
           return null;
         }
       })
       // executing apex post import
       .then(() => {
         if (yamlSettings.executeApex){
-          console.log("doing post import apex");
+          console.log('doing post import apex');
 
           return deployingApi('apex', timestamp, yamlSettings.executeApexPost);
         } else {
-          console.log("no post import apex");
+          console.log('no post import apex');
           return null;
         }
       })
