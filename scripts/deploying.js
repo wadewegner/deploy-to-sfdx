@@ -39,6 +39,9 @@ $(document).ready(() => {
       },
       error: (commandDataResponse) => {
         console.log(commandDataResponse);
+        console.log('what failed');
+        console.log(command);
+        console.log(param);
         update_status(`Sorry, something went wrong. Please contact @WadeWegner on Twitter and send the following error message.\n\nError: ${commandDataResponse.responseText}\n`, true);
         $('div#loaderBlock').hide();
       }
