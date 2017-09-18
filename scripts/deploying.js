@@ -71,15 +71,9 @@ $(document).ready(() => {
           return null;
         }
       })
-      // TODO: loading data
-      .then(() => {
-        if (yamlSettings.dataImport){
-          return deployingApi('data', timestamp, yamlSettings.dataImport);
-        } else {
-          return null;
-        }
-      })
-      // executing apex
+      // end of metadata setup portion
+      // start of data/scripting
+      // loading data
       .then(() => {
         if (yamlSettings.executeApex){
           return deployingApi('apex', timestamp, yamlSettings.executeApex);
@@ -87,6 +81,23 @@ $(document).ready(() => {
           return null;
         }
       })
+      .then(() => {
+        if (yamlSettings.dataImport){
+          return deployingApi('data', timestamp, yamlSettings.dataImport);
+        } else {
+          return null;
+        }
+      })
+      // executing apex post import
+      .then(() => {
+        if (yamlSettings.executeApex){
+          return deployingApi('apex', timestamp, yamlSettings.executeApexPost);
+        } else {
+          return null;
+        }
+      })
+      // testing
+      .then(() => deployingApi('test', timestamp, yamlSettings.runApexTests))
       // generating user password
       .then(() => {
         if (yamlSettings.generatePassword){
@@ -95,7 +106,6 @@ $(document).ready(() => {
           return null;
         }
       })
-      .then(() => deployingApi('test', timestamp, yamlSettings.runApexTests))
       .then(() => {
 
         // generate url
@@ -179,6 +189,7 @@ $(document).ready(() => {
       yamlSettings.scratchOrgDef = doc['scratch-org-def'];
       yamlSettings.showScratchOrgUrl = doc['show-scratch-org-url'];
       yamlSettings.executeApex = doc['execute-apex'];
+      yamlSettings.executeApexPost = doc['execute-apex-post-import'];
       yamlSettings.generatePassword = doc['generate-password'];
       yamlSettings.dataImport = doc['data-import'];
       yamlSettings.packagesPre = doc['package-pre-source'];
@@ -191,6 +202,7 @@ $(document).ready(() => {
 \trun-apex-tests: ${yamlSettings.runApexTests}
 \tscratch-org-def: ${yamlSettings.scratchOrgDef}
 \texecute-apex: ${yamlSettings.executeApex}
+\texecute-apex-post-import: ${yamlSettings.executeApexPost}
 \tpackage-pre-source: ${yamlSettings.packagesPre}
 \tpackage-post-source: ${yamlSettings.packagesPost}
 \tdata-import: ${yamlSettings.dataImport}

@@ -71,21 +71,24 @@ If you make changes to SCSS or UX assets, be sure you regenerate the `dist` file
 ## Supported .salesforcedx.yaml options
 
 ``` yaml
-scratch-org-def: config/project-scratch-def.json #required in your repo
-assign-permset: true #requires the permset name below
+scratch-org-def: config/project-scratch-def.json # required in your repo
+assign-permset: true # requires the permset name below
 permset-name: CustomerID
-run-apex-tests: false #if true, runs all tests in the org
-delete-scratch-org: false #don't know what this does
-show-scratch-org-url: true #displays the url in the deployer app
-generate-password: true #auto-generates a password for the scratch org user
-package-pre-source : #install, in this order, packages BEFORE the source is pushed
+run-apex-tests: false # if true, runs all tests in the org
+delete-scratch-org: false # don't know what this does
+show-scratch-org-url: true # displays the url in the deployer app
+generate-password: true # auto-generates a password for the scratch org user
+package-pre-source : # install, in this order, packages BEFORE the source is pushed
   - 04tB0000000Ln7i #package Id
-package-post-source : #install, in this order, packages AFTER the source is pushed
+package-post-source : # install, in this order, packages AFTER the source is pushed
   - 04tB0000000Ln7i #package Id
-data-import : #execute data:treei:import plans in the specified order
+data-import : # execute data:treei:import plans in the specified order
   - data/somePlan.json
   - data/nextPlan.json
-execute-apex: #run apex scripts in series via execute anonymous.  These are not full classes
+execute-apex: # run apex scripts in series via execute anonymous before importing data.  These are not full classes
+  - scripts/CustomerIDSetup.cls
+  - scripts/helloWorld.cls
+execute-apex-post-import: # runs after any data import plans
   - scripts/CustomerIDSetup.cls
   - scripts/helloWorld.cls
 ```
