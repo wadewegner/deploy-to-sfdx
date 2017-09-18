@@ -67,28 +67,31 @@ $(document).ready(() => {
       .then(() => deployingApi('create', timestamp, yamlSettings.scratchOrgDef))
       // anything that needs to be installed before the source (dependencies!)
       .then(() => {
-        if (yamlSettings.packagesPre){
-          let requests = [];
-          for (let pkg of yamlSettings.packagesPre){
-            requests.push(deployingApi('package', timestamp, pkg));
-          }
-          return Promise.all(requests);
-        } else {
-          return null;
-        }
+        runArray(yamlSettings.packagesPre, 'package');
+        // if (yamlSettings.packagesPre){
+        //   let requests = [];
+        //   for (let pkg of yamlSettings.packagesPre){
+        //     requests.push(deployingApi('package', timestamp, pkg));
+        //   }
+        //   return Promise.all(requests);
+        // } else {
+        //   return null;
+        // }
       })
       .then(() => deployingApi('push', timestamp))
       // anything that can be installed after the source goes in (things that depend on the source!)
       .then(() => {
-        if (yamlSettings.packagesPost){
-          let requests = [];
-          for (let pkg of yamlSettings.packagesPost){
-            requests.push(deployingApi('package', timestamp, pkg));
-          }
-          return Promise.all(requests);
-        } else {
-          return null;
-        }
+        runArray(yamlSettings.packagesPost, 'package');
+
+        // if (yamlSettings.packagesPost){
+        //   let requests = [];
+        //   for (let pkg of yamlSettings.packagesPost){
+        //     requests.push(deployingApi('package', timestamp, pkg));
+        //   }
+        //   return Promise.all(requests);
+        // } else {
+        //   return null;
+        // }
       })
       .then(() => {
         if (yamlSettings.permsetName) {
@@ -101,38 +104,44 @@ $(document).ready(() => {
       // start of data/scripting
       // loading data
       .then(() => {
-        if (yamlSettings.executeApex){
-          let requests = [];
-          for (let apex of yamlSettings.executeApex){
-            requests.push(deployingApi('apex', timestamp, apex));
-          }
-          return Promise.all(requests);
-        } else {
-          return null;
-        }
+        runArray(yamlSettings.executeApex, 'apex');
+
+        // if (yamlSettings.executeApex){
+        //   let requests = [];
+        //   for (let apex of yamlSettings.executeApex){
+        //     requests.push(deployingApi('apex', timestamp, apex));
+        //   }
+        //   return Promise.all(requests);
+        // } else {
+        //   return null;
+        // }
       })
       .then(() => {
-        if (yamlSettings.dataImport){
-          let requests = [];
-          for (let data of yamlSettings.dataImport){
-            requests.push(deployingApi('data', timestamp, data));
-          }
-          return Promise.all(requests);
-        } else {
-          return null;
-        }
+        runArray(yamlSettings.dataImport, 'data');
+
+        // if (yamlSettings.dataImport){
+        //   let requests = [];
+        //   for (let data of yamlSettings.dataImport){
+        //     requests.push(deployingApi('data', timestamp, data));
+        //   }
+        //   return Promise.all(requests);
+        // } else {
+        //   return null;
+        // }
       })
       // executing apex post import
       .then(() => {
-        if (yamlSettings.executeApexPost){
-          let requests = [];
-          for (let apex of yamlSettings.executeApexPost){
-            requests.push(deployingApi('apex', timestamp, apex));
-          }
-          return Promise.all(requests);
-        } else {
-          return null;
-        }
+        runArray(yamlSettings.executeApexPost, 'apex');
+
+        // if (yamlSettings.executeApexPost){
+        //   let requests = [];
+        //   for (let apex of yamlSettings.executeApexPost){
+        //     requests.push(deployingApi('apex', timestamp, apex));
+        //   }
+        //   return Promise.all(requests);
+        // } else {
+        //   return null;
+        // }
       })
       // testing
       .then(() => deployingApi('test', timestamp, yamlSettings.runApexTests))
