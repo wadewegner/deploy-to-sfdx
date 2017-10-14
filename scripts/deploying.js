@@ -29,7 +29,7 @@ $(document).ready(() => {
       data: JSON.stringify(commandData),
       contentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      timeout: 120000,
+      timeout: 240000,
       success: (commandDataResponse) => {
         update_status(`${commandDataResponse.message}`);
       },
