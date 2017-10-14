@@ -12,6 +12,10 @@ export PATH=$PATH:/app/.local/share/sfdx/cli/bin/
 echo "Updating Salesforce CLI plugin ..."
 sfdx update
 
+echo "Return version info ..."
+sfdx version
+sfdx plugins --core
+
 echo "Creating local resources ..."
 mkdir /app/tmp
 
