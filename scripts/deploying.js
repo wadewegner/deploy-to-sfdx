@@ -30,7 +30,7 @@ $(document).ready(() => {
       contentType: 'application/json; charset=utf-8',
       dataType: 'json',
       async: true,
-      timeout: 240000,
+      timeout: 10000000,
       success: (commandDataResponse) => {
         update_status(`${commandDataResponse.message}`);
       },
