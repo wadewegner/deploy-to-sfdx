@@ -29,6 +29,7 @@ $(document).ready(() => {
       data: JSON.stringify(commandData),
       contentType: 'application/json; charset=utf-8',
       dataType: 'json',
+      async: false,
       timeout: 0,
       success: (commandDataResponse) => {
         update_status(`${commandDataResponse.message}`);
