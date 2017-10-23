@@ -17,8 +17,8 @@ app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.use(cookieParser());
 
-require('./lib/app-express')(app);
-require('./lib/app-router')(router);
+require('./lib/web')(app);
+require('./lib/apis')(router);
 
 app.use('/api', router);
 
