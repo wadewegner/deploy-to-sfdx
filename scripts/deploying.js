@@ -1,22 +1,19 @@
 $(document).ready(() => {
 
-  let actionCount = 0;
-  let message = '';
-
   function update_status(newMessage, excludeCount) {
-    actionCount += 1;
+    let message = '';
 
     if (excludeCount) {
       message = `${newMessage}\n${message}`;
     } else {
       newMessage = newMessage.replace(/^\s+|\s+$/g, '');
-      message = `${actionCount}) ${newMessage}\n${message}`;
+      message = `${newMessage}\n${message}`;
     }
 
     $('textarea#status').val(message);
   }
 
-  
+
   // deprecate
   function deployingApi(command, timestamp, param) {
 
@@ -34,7 +31,7 @@ $(document).ready(() => {
       async: true,
       timeout: 10000000,
       success: (commandDataResponse) => {
-        
+
 
         update_status(`Job Id: ${commandDataResponse.guid}`);
 
@@ -47,13 +44,11 @@ $(document).ready(() => {
     });
   }
 
-  function poll(stage, guid) {
+  function poll(stage) {
 
     var complete = false;
-    
     var data = {};
     data.guid = guid;
-    data.stage = stage;
 
     $.ajax({
       url: '/api/status',
@@ -62,45 +57,45 @@ $(document).ready(() => {
       success: function (response) {
 
         var message = response.message;
+        complete = response.complete;
 
-        if (message !== '') {
-          update_status(message);
-          complete = true;
+        update_status(message);
+
+        if (complete) {
+          // $('#loginUrl').attr('href', url);
+          // $('#loginUrl').text(`${url.substring(0, 80)}...`);
+          // $('#loginBlock').show();
+          $('div#loaderBlock').hide();
         }
-        
       },
       dataType: 'json',
       complete: setTimeout(function () {
         if (!complete) {
-          poll(stage, guid);
+          poll(stage);
         }
       }, 2500),
       timeout: 2000
     });
   }
 
-  function createJob(yamlSettings) {
-
-    var guid;
+  function createJob(settings) {
 
     $.ajax({
       type: 'POST',
       url: '/api/deploy',
-      data: JSON.stringify(yamlSettings),
+      data: JSON.stringify(settings),
       contentType: 'application/json; charset=utf-8',
       dataType: 'json',
       async: false,
-      success: (commandDataResponse) => {
-        guid = commandDataResponse.message;
-        update_status(`Started job: ${guid}`);
+      success: () => {
+        // guid = commandDataResponse.message;
+        update_status(`Started job: ${settings.guid}`);
       },
       error: (commandDataResponse) => {
         update_status(`Sorry, something went wrong. Please contact @WadeWegner on Twitter and send the following error message.\n\nError: ${commandDataResponse.responseText}\n`, true);
         $('div#loaderBlock').hide();
       }
     });
-
-    return guid;
 
     // return deployingApi('clone', timestamp, githubRepo)
     //   .then(() => {
@@ -160,11 +155,16 @@ $(document).ready(() => {
   }
 
   const githubRepo = $('input#template').val();
+  const guid = $('input#guid').val();
+
+
+
   let yamlFile = githubRepo.replace('github.com', 'raw.githubusercontent.com');
   yamlFile += '/master/.salesforcedx.yaml';
 
   const settings = {};
   settings.githubRepo = githubRepo;
+  settings.guid = guid;
 
   $.ajax({
     url: yamlFile,
@@ -211,10 +211,10 @@ $(document).ready(() => {
     }
   });
 
-  var guid = createJob(settings);
+  createJob(settings);
 
   // alert(guid);
-  
-  poll('clone', guid);
-  
+
+  poll(guid);
+
 });

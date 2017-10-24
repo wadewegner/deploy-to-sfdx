@@ -22,6 +22,7 @@
     "@salesforce-ux/design-system": "^2.3.1",
     "amqplib": "^0.5.1",
     "async": "^2.5.0",
+    "bluebird": "^3.5.1",
     "body-parser": "^1.17.2",
     "child-process-promise": "^2.2.1",
     "child_process": "^1.0.2",
@@ -33,6 +34,7 @@
     "jsforce": "^1.8.0",
     "pg": "^7.1.2",
     "pg-pool": "^2.0.3",
+    "pg-promise": "^7.0.3",
     "salesforce-oauth2": "^0.1.8",
     "sleep": "^5.1.1",
     "yamljs": "^0.3.0"
