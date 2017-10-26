@@ -1,4 +1,3 @@
-const steps = require('./lib/steps.js');
 const async = require('async');
 const pgp = require('pg-promise')();
 const dbUrl = require('url');
@@ -26,9 +25,14 @@ function setNewStage(settings, stage) {
 }
 
 function deploymentStage(settings, complete) {
-  if (!complete) { complete = false; }
+  
+  let scratchOrgUrlSql = '';
+  if (!complete) { 
+    complete = false;
+    scratchOrgUrlSql = `, scratch_url = '${settings.scratchOrgUrl}'`;
+   }
 
-  const updateQuery = `UPDATE deployments SET stage = '${settings.stage}', complete = ${complete} WHERE guid = '${settings.guid}'`;
+  const updateQuery = `UPDATE deployments SET stage = '${settings.stage}', complete = ${complete}${scratchOrgUrlSql} WHERE guid = '${settings.guid}'`;
   db.any(updateQuery, [true]);
   return settings;
 }
@@ -39,12 +43,22 @@ function deploymentSteps(settings) {
   return settings;
 }
 
+function deploymentError(guid, message) {
+  const updateQuery = `UPDATE deployments SET stage = 'error', error_message ='${message}' WHERE guid = '${guid}'`;
+  db.any(updateQuery, [true]);
+}
+
 function formatMessage(settings) {
 
   let message = '';
 
   if (settings.stderr) {
     message = `Error: ${settings.stderr}.`;
+
+    if (message.indexOf('Session expired or invalid') > -1) {
+      throw new Error(settings.stderr);
+    }
+
   } else {
     message = `${settings.stdout}.`;
 
@@ -66,6 +80,9 @@ function formatMessage(settings) {
     }
     if (settings.stage === 'test') {
       message = `Apex tests: ${settings.stdout}.`;
+    }
+    if (settings.stage === '') {
+      settings.scratchOrgUrl = settings.stdout;
     }
   }
 
@@ -95,6 +112,7 @@ async.whilst(
   (callback) => {
 
     const selectQuery = "SELECT guid, username, repo, settings FROM deployments WHERE stage = 'init' AND complete = false LIMIT 1";
+    let guid = '';
 
     db.any(selectQuery, [true])
       .then((data) => {
@@ -109,6 +127,7 @@ async.whilst(
         const settings = JSON.parse(data[0].settings);
 
         settings.guid = data[0].guid;
+        guid = settings.guid;
         settings.tokenName = settings.access_token.replace(/\W/g, '');
         settings.startingDirectory = process.env.STARTINGDIRECTORY;
         settings.directory = `${settings.tokenName}-${settings.guid}`;
@@ -119,7 +138,8 @@ async.whilst(
         settings.pushScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;sfdx force:source:push --json | jq '.result.pushedSource | length'`;
         settings.permSetScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;sfdx force:user:permset:assign -n ${settings.permsetName}`;
         settings.testScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
-        settings.urlScript = `${settings.startingDirectory}cd ${settings.catchdirectory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result.instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result.accessToken)`;
+        settings.urlScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result.instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result.accessToken)`;
+        settings.scratchOrgUrl = '';
 
         console.log(settings);
 
@@ -177,7 +197,12 @@ async.whilst(
       .catch((error) => {
         // handles cases where there are no records
         if (error.message !== 'norecords') {
-          console.log('error', error);
+          // update an log status as an error      
+          // TODO: how to access the guid?
+          console.log('guid1', guid);
+          console.log('error1', error);
+
+          deploymentError(guid, error.message);
         }
       });
 
