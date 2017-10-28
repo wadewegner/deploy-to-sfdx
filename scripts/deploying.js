@@ -1,134 +1,161 @@
 $(document).ready(() => {
 
-  let actionCount = 0;
-  let message = '';
-
   function update_status(newMessage, excludeCount) {
-    actionCount += 1;
+    let message = '';
 
     if (excludeCount) {
       message = `${newMessage}\n${message}`;
     } else {
       newMessage = newMessage.replace(/^\s+|\s+$/g, '');
-      message = `${actionCount}) ${newMessage}\n${message}`;
+      message = `${newMessage}\n${message}`;
     }
 
     $('textarea#status').val(message);
   }
 
-  function deployingApi(command, timestamp, param) {
+  function poll(stage) {
 
-    const commandData = {};
-    commandData.command = command;
-    commandData.timestamp = timestamp;
-    commandData.param = param;
+    var complete = false;
+    var data = {};
+    data.guid = guid;
 
-    return $.ajax({
+    $.ajax({
+      url: '/api/status',
       type: 'POST',
-      url: '/api/deploying',
-      data: JSON.stringify(commandData),
+      data: data,
+      success: function (response) {
+
+        var message = response.message;
+        complete = response.complete;
+        var scratch_url = response.scratch_url;
+
+        update_status(message);
+
+        if (complete) {
+          $('#loginUrl').attr('href', scratch_url);
+          $('#loginUrl').text(`${scratch_url.substring(0, 80)}...`);
+          $('#loginBlock').show();
+          $('div#loaderBlock').hide();
+        }
+      },
+      dataType: 'json',
+      complete: setTimeout(function () {
+        if (!complete) {
+          poll(stage);
+        }
+      }, 2500),
+      timeout: 2000
+    });
+  }
+
+  function createJob(settings) {
+
+    $.ajax({
+      type: 'POST',
+      url: '/api/deploy',
+      data: JSON.stringify(settings),
       contentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      async: true,
-      timeout: 10000000,
-      success: (commandDataResponse) => {
-        update_status(`${commandDataResponse.message}`);
+      async: false,
+      success: () => {
+        // guid = commandDataResponse.message;
+        update_status(`Started job: ${settings.guid}`);
       },
       error: (commandDataResponse) => {
         update_status(`Sorry, something went wrong. Please contact @WadeWegner on Twitter and send the following error message.\n\nError: ${commandDataResponse.responseText}\n`, true);
         $('div#loaderBlock').hide();
       }
     });
-  }
 
-  function deploy(yamlSettings, githubRepo) {
+    // return deployingApi('clone', timestamp, githubRepo)
+    //   .then(() => {
+    //     return deployingApi('create', timestamp, yamlSettings.scratchOrgDef);
+    //   })
+    //   .then(() => {
+    //     return deployingApi('push', timestamp);
+    //   })
+    //   .then(() => {
+    //     if (yamlSettings.permsetName) {
+    //       return deployingApi('permset', timestamp, yamlSettings.permsetName);
+    //     } else {
+    //       return null;
+    //     }
+    //   })
+    //   .then(() => {
+    //     return deployingApi('test', timestamp, yamlSettings.runApexTests);
+    //   })
+    //   .then(() => {
 
-    const timestamp = new Date().getTime().toString();
+    //     // generate url
+    //     let commandData = {};
+    //     commandData.command = 'url';
+    //     commandData.timestamp = timestamp;
 
-    return deployingApi('clone', timestamp, githubRepo)
-      .then(() => {
-        return deployingApi('create', timestamp, yamlSettings.scratchOrgDef);
-      })
-      .then(() => {
-        return deployingApi('push', timestamp);
-      })
-      .then(() => {
-        if (yamlSettings.permsetName) {
-          return deployingApi('permset', timestamp, yamlSettings.permsetName);
-        } else {
-          return null;
-        }
-      })
-      .then(() => {
-        return deployingApi('test', timestamp, yamlSettings.runApexTests);
-      })
-      .then(() => {
+    //     return $.ajax({
+    //       type: 'POST',
+    //       url: '/api/deploying',
+    //       data: JSON.stringify(commandData),
+    //       contentType: 'application/json; charset=utf-8',
+    //       dataType: 'json',
+    //       success: (commandDataResponse) => {
+    //         update_status(`Generated a login url: ${commandDataResponse.message}`);
 
-        // generate url
-        let commandData = {};
-        commandData.command = 'url';
-        commandData.timestamp = timestamp;
+    //         const url = commandDataResponse.message;
 
-        return $.ajax({
-          type: 'POST',
-          url: '/api/deploying',
-          data: JSON.stringify(commandData),
-          contentType: 'application/json; charset=utf-8',
-          dataType: 'json',
-          success: (commandDataResponse) => {
-            update_status(`Generated a login url: ${commandDataResponse.message}`);
+    //         $('#loginUrl').attr('href', url);
+    //         $('#loginUrl').text(`${url.substring(0, 80)}...`);
+    //         $('#loginBlock').show();
+    //         $('div#loaderBlock').hide();
 
-            const url = commandDataResponse.message;
+    //         // clean up
+    //         commandData = {};
+    //         commandData.command = 'clean';
+    //         commandData.timestamp = timestamp;
+    //       }
+    //     }).then(() => {
+    //       return deployingApi('clean', timestamp)
+    //         .then(() => {
 
-            $('#loginUrl').attr('href', url);
-            $('#loginUrl').text(`${url.substring(0, 80)}...`);
-            $('#loginBlock').show();
-            $('div#loaderBlock').hide();
+    //           message = `Finished. You have deployed the app to your scratch org!\n\n${message}`;
+    //           $('textarea#status').val(message);
 
-            // clean up
-            commandData = {};
-            commandData.command = 'clean';
-            commandData.timestamp = timestamp;
-          }
-        }).then(() => {
-          return deployingApi('clean', timestamp)
-            .then(() => {
-
-              message = `Finished. You have deployed the app to your scratch org!\n\n${message}`;
-              $('textarea#status').val(message);
-
-            });
-        });
-      });
+    //         });
+    //     });
+    //   });
   }
 
   const githubRepo = $('input#template').val();
+  const guid = $('input#guid').val();
+
+
+
   let yamlFile = githubRepo.replace('github.com', 'raw.githubusercontent.com');
   yamlFile += '/master/.salesforcedx.yaml';
 
-  const yamlSettings = {};
+  const settings = {};
+  settings.githubRepo = githubRepo;
+  settings.guid = guid;
 
   $.ajax({
     url: yamlFile,
     type: 'GET',
+    async: false,
     error: (XMLHttpRequest, textStatus, errorThrown) => {
 
-      yamlSettings.assignPermset = 'false';
-      yamlSettings.permsetName = '';
-      yamlSettings.deleteScratchOrg = 'false';
-      yamlSettings.runApexTests = 'false';
-      yamlSettings.scratchOrgDef = 'config/project-scratch-def.json';
-      yamlSettings.showScratchOrgUrl = 'true';
+      settings.assignPermset = 'false';
+      settings.permsetName = '';
+      settings.deleteScratchOrg = 'false';
+      settings.runApexTests = 'false';
+      settings.scratchOrgDef = 'config/project-scratch-def.json';
+      settings.showScratchOrgUrl = 'true';
 
       update_status(`Didn't find a .salesforcedx.yaml file. Using defaults:
-\tassign-permset: ${yamlSettings.assignPermset}
-\tpermset-name: ${yamlSettings.permsetName}
-\tdelete-scratch-org: ${yamlSettings.deleteScratchOrg}
-\trun-apex-tests: ${yamlSettings.runApexTests}
-\tscratch-org-def: ${yamlSettings.scratchOrgDef}
-\tshow-scratch-org-url: ${yamlSettings.showScratchOrgUrl}`);
-
-      deploy(yamlSettings, githubRepo);
+\tassign-permset: ${settings.assignPermset}
+\tpermset-name: ${settings.permsetName}
+\tdelete-scratch-org: ${settings.deleteScratchOrg}
+\trun-apex-tests: ${settings.runApexTests}
+\tscratch-org-def: ${settings.scratchOrgDef}
+\tshow-scratch-org-url: ${settings.showScratchOrgUrl}`);
 
     },
     success: (yamlFileDataResponse, status) => {
@@ -137,23 +164,27 @@ $(document).ready(() => {
 
       const doc = jsyaml.load(yamlFileDataResponse);
 
-      yamlSettings.assignPermset = doc['assign-permset'];
-      yamlSettings.permsetName = doc['permset-name'];
-      yamlSettings.deleteScratchOrg = doc['delete-scratch-org'];
-      yamlSettings.runApexTests = doc['run-apex-tests'];
-      yamlSettings.scratchOrgDef = doc['scratch-org-def'];
-      yamlSettings.showScratchOrgUrl = doc['show-scratch-org-url'];
+      settings.assignPermset = doc['assign-permset'];
+      settings.permsetName = doc['permset-name'];
+      settings.deleteScratchOrg = doc['delete-scratch-org'];
+      settings.runApexTests = doc['run-apex-tests'];
+      settings.scratchOrgDef = doc['scratch-org-def'];
+      settings.showScratchOrgUrl = doc['show-scratch-org-url'];
 
       update_status(`Parsed the following values from the yaml file:
-\tassign-permset: ${yamlSettings.assignPermset}
-\tpermset-name: ${yamlSettings.permsetName}
-\tdelete-scratch-org: ${yamlSettings.deleteScratchOrg}
-\trun-apex-tests: ${yamlSettings.runApexTests}
-\tscratch-org-def: ${yamlSettings.scratchOrgDef}
-\tshow-scratch-org-url: ${yamlSettings.showScratchOrgUrl}`);
-
-      deploy(yamlSettings, githubRepo);
-
+\tassign-permset: ${settings.assignPermset}
+\tpermset-name: ${settings.permsetName}
+\tdelete-scratch-org: ${settings.deleteScratchOrg}
+\trun-apex-tests: ${settings.runApexTests}
+\tscratch-org-def: ${settings.scratchOrgDef}
+\tshow-scratch-org-url: ${settings.showScratchOrgUrl}`);
     }
   });
+
+  createJob(settings);
+
+  // alert(guid);
+
+  poll(guid);
+
 });
