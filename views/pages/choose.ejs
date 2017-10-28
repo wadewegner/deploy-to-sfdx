@@ -20,7 +20,7 @@
             
 
             <span class="slds-radio">
-              <input type="radio" id="radio-<%=i%>" name="options" checked="checked" value="<%= urls[i] %>">
+              <input type="radio" id="radio-<%=i%>" name="options" <% if (i == 0) {%>checked="checked"<% } %> value="<%= urls[i] %>">
               <label class="slds-radio__label" for="radio-<%=i%>">
                 <span class="slds-radio_faux"></span> <%= urls[i] %>
             <span class="slds-form-element__label"><a href="<%= urls[i] %>" target="_blank">^</a></span>
