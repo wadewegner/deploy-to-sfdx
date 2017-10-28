@@ -25,12 +25,12 @@ a.sfdx-logo:visited {
 .sfdx-output {
 	width: 100%;
 	height: 350px;
-	border-radius: $border-radius-small;
-	border: 1px solid $color-border;
-	padding: $spacing-small;
+	padding: 0.75rem;
 	line-height: 1.5rem;
-	color: $color-text-input-disabled;
-	resize: none;
+	color: #54698d;
+	resize: none; 
+	word-break:break-all; 
+	overflow: scroll;
 }
 
 .sfdx-slim {

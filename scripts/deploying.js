@@ -1,16 +1,13 @@
 $(document).ready(() => {
 
-  function update_status(newMessage, excludeCount) {
+  function update_status(newMessage) {
+
     let message = '';
+    newMessage = newMessage.replace(/^\s+|\s+$/g, '');
+    message = `${newMessage}<br/>${message}`;
 
-    if (excludeCount) {
-      message = `${newMessage}\n${message}`;
-    } else {
-      newMessage = newMessage.replace(/^\s+|\s+$/g, '');
-      message = `${newMessage}\n${message}`;
-    }
-
-    $('textarea#status').val(message);
+    $('#status').text(message);
+    $('#status').html($('#status').text());
   }
 
   function poll(guid) {
@@ -72,7 +69,7 @@ $(document).ready(() => {
         // update_status(`Started job: ${settings.guid}`);
       },
       error: (commandDataResponse) => {
-        update_status(`Sorry, something went wrong. Please log an issue on github: https://github.com/wadewegner/deploy-to-sfdx/issues.\n\nError: ${commandDataResponse.responseText}\n`, true);
+        update_status(`Sorry, something went wrong. Please log an issue on github: https://github.com/wadewegner/deploy-to-sfdx/issues.\n\nError: ${commandDataResponse.responseText}\n`);
         $('div#loaderBlock').hide();
       }
     });
