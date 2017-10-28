@@ -66,68 +66,10 @@ $(document).ready(() => {
         $('div#loaderBlock').hide();
       }
     });
-
-    // return deployingApi('clone', timestamp, githubRepo)
-    //   .then(() => {
-    //     return deployingApi('create', timestamp, yamlSettings.scratchOrgDef);
-    //   })
-    //   .then(() => {
-    //     return deployingApi('push', timestamp);
-    //   })
-    //   .then(() => {
-    //     if (yamlSettings.permsetName) {
-    //       return deployingApi('permset', timestamp, yamlSettings.permsetName);
-    //     } else {
-    //       return null;
-    //     }
-    //   })
-    //   .then(() => {
-    //     return deployingApi('test', timestamp, yamlSettings.runApexTests);
-    //   })
-    //   .then(() => {
-
-    //     // generate url
-    //     let commandData = {};
-    //     commandData.command = 'url';
-    //     commandData.timestamp = timestamp;
-
-    //     return $.ajax({
-    //       type: 'POST',
-    //       url: '/api/deploying',
-    //       data: JSON.stringify(commandData),
-    //       contentType: 'application/json; charset=utf-8',
-    //       dataType: 'json',
-    //       success: (commandDataResponse) => {
-    //         update_status(`Generated a login url: ${commandDataResponse.message}`);
-
-    //         const url = commandDataResponse.message;
-
-    //         $('#loginUrl').attr('href', url);
-    //         $('#loginUrl').text(`${url.substring(0, 80)}...`);
-    //         $('#loginBlock').show();
-    //         $('div#loaderBlock').hide();
-
-    //         // clean up
-    //         commandData = {};
-    //         commandData.command = 'clean';
-    //         commandData.timestamp = timestamp;
-    //       }
-    //     }).then(() => {
-    //       return deployingApi('clean', timestamp)
-    //         .then(() => {
-
-    //           message = `Finished. You have deployed the app to your scratch org!\n\n${message}`;
-    //           $('textarea#status').val(message);
-
-    //         });
-    //     });
-    //   });
   }
 
   const githubRepo = $('input#template').val();
   const guid = $('input#guid').val();
-
-
 
   let yamlFile = githubRepo.replace('github.com', 'raw.githubusercontent.com');
   yamlFile += '/master/.salesforcedx.yaml';
@@ -149,13 +91,14 @@ $(document).ready(() => {
       settings.scratchOrgDef = 'config/project-scratch-def.json';
       settings.showScratchOrgUrl = 'true';
 
-      update_status(`Didn't find a .salesforcedx.yaml file. Using defaults:
-\tassign-permset: ${settings.assignPermset}
-\tpermset-name: ${settings.permsetName}
-\tdelete-scratch-org: ${settings.deleteScratchOrg}
-\trun-apex-tests: ${settings.runApexTests}
-\tscratch-org-def: ${settings.scratchOrgDef}
-\tshow-scratch-org-url: ${settings.showScratchOrgUrl}`);
+      // not loading
+      //       update_status(`Didn't find a .salesforcedx.yaml file. Using defaults:
+      // \tassign-permset: ${settings.assignPermset}
+      // \tpermset-name: ${settings.permsetName}
+      // \tdelete-scratch-org: ${settings.deleteScratchOrg}
+      // \trun-apex-tests: ${settings.runApexTests}
+      // \tscratch-org-def: ${settings.scratchOrgDef}
+      // \tshow-scratch-org-url: ${settings.showScratchOrgUrl}`);
 
     },
     success: (yamlFileDataResponse, status) => {
@@ -171,13 +114,14 @@ $(document).ready(() => {
       settings.scratchOrgDef = doc['scratch-org-def'];
       settings.showScratchOrgUrl = doc['show-scratch-org-url'];
 
-      update_status(`Parsed the following values from the yaml file:
-\tassign-permset: ${settings.assignPermset}
-\tpermset-name: ${settings.permsetName}
-\tdelete-scratch-org: ${settings.deleteScratchOrg}
-\trun-apex-tests: ${settings.runApexTests}
-\tscratch-org-def: ${settings.scratchOrgDef}
-\tshow-scratch-org-url: ${settings.showScratchOrgUrl}`);
+      // not loading
+      //       update_status(`Parsed the following values from the yaml file:
+      // \tassign-permset: ${settings.assignPermset}
+      // \tpermset-name: ${settings.permsetName}
+      // \tdelete-scratch-org: ${settings.deleteScratchOrg}
+      // \trun-apex-tests: ${settings.runApexTests}
+      // \tscratch-org-def: ${settings.scratchOrgDef}
+      // \tshow-scratch-org-url: ${settings.showScratchOrgUrl}`);
     }
   });
 

@@ -2,7 +2,9 @@ $(document).ready(function () {
 
   $("#yes").click(function () {
     var template = $('input#template').val();
-    window.location.href = "/deploying?template=" + template;
+    var guid = $('input#guid').val();
+
+    window.location.href = '/deploying?template=' + template + '&guid=' + guid;
   });
 
   $("#no").click(function () {
