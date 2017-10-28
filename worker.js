@@ -116,8 +116,6 @@ async.whilst(
   () => true,
   (callback) => {
 
-    console.log('working');
-
     const selectQuery = "SELECT guid, username, repo, settings FROM deployments WHERE stage = 'init' AND complete = false LIMIT 1";
     let guid = '';
 
@@ -129,12 +127,14 @@ async.whilst(
           throw new Error('norecords');
         }
 
-        console.log('found data');
-
         const settings = JSON.parse(data[0].settings);
 
         settings.guid = data[0].guid;
         guid = settings.guid;
+
+        console.log('found job', guid);
+        
+
         settings.tokenName = settings.access_token.replace(/\W/g, '');
         settings.startingDirectory = process.env.STARTINGDIRECTORY;
         settings.directory = `${settings.tokenName}-${settings.guid}`;
@@ -196,16 +196,14 @@ async.whilst(
       // completed
       .then(settings => setNewStage(settings, 'complete'))
       .then(settings => deploymentStage(settings, true))
-      .then(() => {
-        console.log('done');
+      .then((settings) => {
+        console.log('finished job', settings.guid);
       })
       .catch((error) => {
         // handles cases where there are no records
         if (error.message !== 'norecords') {
-          // update an log status as an error      
-          // TODO: how to access the guid?
-          console.log('guid1', guid);
-          console.log('error1', error);
+          console.error('guid', guid);
+          console.error('error', error);
 
           deploymentError(guid, error.message);
         }
@@ -216,6 +214,6 @@ async.whilst(
     }, 3000);
   },
   (err) => {
-    console.log(`err: ${err}`);
+    console.error(`err: ${err}`);
   }
 );
