@@ -24,11 +24,10 @@ function setNewStage(settings, stage) {
   return settings;
 }
 
-function deploymentStage(settings, complete) {
+function deploymentStage(settings, complete = false) {
   
   let scratchOrgUrlSql = '';
-  if (!complete) { 
-    complete = false;
+  if (complete) { 
     scratchOrgUrlSql = `, scratch_url = '${settings.scratchOrgUrl}'`;
    }
 
@@ -79,10 +78,16 @@ function formatMessage(settings) {
       }
     }
     if (settings.stage === 'test') {
-      message = `Apex tests: ${settings.stdout}.`;
+      if (settings.stdout !== '') {
+        message = `Apex tests: ${settings.stdout}.`;
+      }
+      else {
+        message = 'No Apex tests.';
+      }
     }
-    if (settings.stage === '') {
+    if (settings.stage === 'url') {
       settings.scratchOrgUrl = settings.stdout;
+      message = `Scratch org URL: ${settings.scratchOrgUrl}.`;
     }
   }
 
@@ -140,8 +145,6 @@ async.whilst(
         settings.testScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
         settings.urlScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result.instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result.accessToken)`;
         settings.scratchOrgUrl = '';
-
-        console.log(settings);
 
         return settings;
       })

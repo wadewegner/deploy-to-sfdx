@@ -13,37 +13,6 @@ $(document).ready(() => {
     $('textarea#status').val(message);
   }
 
-
-  // deprecate
-  function deployingApi(command, timestamp, param) {
-
-    const commandData = {};
-    commandData.command = command;
-    commandData.timestamp = timestamp;
-    commandData.param = param;
-
-    return $.ajax({
-      type: 'POST',
-      url: '/api/deploying',
-      data: JSON.stringify(commandData),
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      async: true,
-      timeout: 10000000,
-      success: (commandDataResponse) => {
-
-
-        update_status(`Job Id: ${commandDataResponse.guid}`);
-
-        return guid;
-      },
-      error: (commandDataResponse) => {
-        update_status(`Sorry, something went wrong. Please contact @WadeWegner on Twitter and send the following error message.\n\nError: ${commandDataResponse.responseText}\n`, true);
-        $('div#loaderBlock').hide();
-      }
-    });
-  }
-
   function poll(stage) {
 
     var complete = false;
@@ -58,13 +27,14 @@ $(document).ready(() => {
 
         var message = response.message;
         complete = response.complete;
+        var scratch_url = response.scratch_url;
 
         update_status(message);
 
         if (complete) {
-          // $('#loginUrl').attr('href', url);
-          // $('#loginUrl').text(`${url.substring(0, 80)}...`);
-          // $('#loginBlock').show();
+          $('#loginUrl').attr('href', scratch_url);
+          $('#loginUrl').text(`${scratch_url.substring(0, 80)}...`);
+          $('#loginBlock').show();
           $('div#loaderBlock').hide();
         }
       },
