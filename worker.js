@@ -60,11 +60,12 @@ function formatMessage(settings) {
   let message = '';
 
   if (settings.stderr) {
-    message = `Error: ${settings.stderr}.`;
 
-    // if (message.indexOf('Session expired or invalid') > -1) {
-      throw new Error(settings.stderr);
-    // }
+    message = `Error: ${settings.stderr}.`;
+    
+    if (settings.stderr.indexOf('Flag --permsetname expects a value') > -1) {
+      message = 'No permset specified.';
+    }
 
   } else {
     message = `${settings.stdout}.`;
@@ -98,6 +99,8 @@ function formatMessage(settings) {
       message = `Scratch org URL: ${settings.scratchOrgUrl}.`;
     }
   }
+
+  settings.stderr = '';
 
   console.log('message', settings.stage, message);
   settings.message = message;
