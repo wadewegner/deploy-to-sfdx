@@ -116,6 +116,8 @@ async.whilst(
   () => true,
   (callback) => {
 
+    console.log('working');
+
     const selectQuery = "SELECT guid, username, repo, settings FROM deployments WHERE stage = 'init' AND complete = false LIMIT 1";
     let guid = '';
 
