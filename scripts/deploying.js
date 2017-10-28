@@ -59,7 +59,7 @@ $(document).ready(() => {
       async: false,
       success: () => {
         // guid = commandDataResponse.message;
-        update_status(`Started job: ${settings.guid}`);
+        // update_status(`Started job: ${settings.guid}`);
       },
       error: (commandDataResponse) => {
         update_status(`Sorry, something went wrong. Please contact @WadeWegner on Twitter and send the following error message.\n\nError: ${commandDataResponse.responseText}\n`, true);
