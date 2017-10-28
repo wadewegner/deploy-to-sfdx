@@ -13,7 +13,7 @@ $(document).ready(() => {
     $('textarea#status').val(message);
   }
 
-  function poll(stage) {
+  function poll(guid) {
 
     var complete = false;
     var data = {};
@@ -26,12 +26,23 @@ $(document).ready(() => {
       success: function (response) {
 
         var message = response.message;
-        complete = response.complete;
         var scratch_url = response.scratch_url;
+        var stage = response.stage;
+        var error_message = response.error_message;
+
+        complete = response.complete;
+
+        if (stage === 'error') {
+          message = `Sorry, something went wrong. Please log an issue on github: https://github.com/wadewegner/deploy-to-sfdx/issues.\n\nError: ${error_message}\n`;
+        }
 
         update_status(message);
 
-        if (complete) {
+        if (complete && stage === 'error') {
+          $('div#loaderBlock').hide();
+        }
+
+        if (complete && stage !== 'error') {
           $('#loginUrl').attr('href', scratch_url);
           $('#loginUrl').text(`${scratch_url.substring(0, 80)}...`);
           $('#loginBlock').show();
@@ -41,7 +52,7 @@ $(document).ready(() => {
       dataType: 'json',
       complete: setTimeout(function () {
         if (!complete) {
-          poll(stage);
+          poll(guid);
         }
       }, 2500),
       timeout: 2000
@@ -58,11 +69,10 @@ $(document).ready(() => {
       dataType: 'json',
       async: false,
       success: () => {
-        // guid = commandDataResponse.message;
         // update_status(`Started job: ${settings.guid}`);
       },
       error: (commandDataResponse) => {
-        update_status(`Sorry, something went wrong. Please contact @WadeWegner on Twitter and send the following error message.\n\nError: ${commandDataResponse.responseText}\n`, true);
+        update_status(`Sorry, something went wrong. Please log an issue on github: https://github.com/wadewegner/deploy-to-sfdx/issues.\n\nError: ${commandDataResponse.responseText}\n`, true);
         $('div#loaderBlock').hide();
       }
     });
@@ -91,19 +101,8 @@ $(document).ready(() => {
       settings.scratchOrgDef = 'config/project-scratch-def.json';
       settings.showScratchOrgUrl = 'true';
 
-      // not loading
-      //       update_status(`Didn't find a .salesforcedx.yaml file. Using defaults:
-      // \tassign-permset: ${settings.assignPermset}
-      // \tpermset-name: ${settings.permsetName}
-      // \tdelete-scratch-org: ${settings.deleteScratchOrg}
-      // \trun-apex-tests: ${settings.runApexTests}
-      // \tscratch-org-def: ${settings.scratchOrgDef}
-      // \tshow-scratch-org-url: ${settings.showScratchOrgUrl}`);
-
     },
     success: (yamlFileDataResponse, status) => {
-
-      update_status(`Discovered ${yamlFile}`);
 
       const doc = jsyaml.load(yamlFileDataResponse);
 
@@ -114,20 +113,10 @@ $(document).ready(() => {
       settings.scratchOrgDef = doc['scratch-org-def'];
       settings.showScratchOrgUrl = doc['show-scratch-org-url'];
 
-      // not loading
-      //       update_status(`Parsed the following values from the yaml file:
-      // \tassign-permset: ${settings.assignPermset}
-      // \tpermset-name: ${settings.permsetName}
-      // \tdelete-scratch-org: ${settings.deleteScratchOrg}
-      // \trun-apex-tests: ${settings.runApexTests}
-      // \tscratch-org-def: ${settings.scratchOrgDef}
-      // \tshow-scratch-org-url: ${settings.showScratchOrgUrl}`);
     }
   });
 
   createJob(settings);
-
-  // alert(guid);
 
   poll(guid);
 

@@ -37,13 +37,21 @@ function deploymentStage(settings, complete = false) {
 }
 
 function deploymentSteps(settings) {
-  const insertQuery = `INSERT INTO deployment_steps (guid, stage, message) VALUES ('${settings.guid}', '${settings.stage}', '${settings.message}')`;
+
+  const message = settings.message.replace("'", "''");
+  const insertQuery = `INSERT INTO deployment_steps (guid, stage, message) VALUES ('${settings.guid}', '${settings.stage}', '${message}')`;
   db.any(insertQuery, [true]);
   return settings;
 }
 
 function deploymentError(guid, message) {
-  const updateQuery = `UPDATE deployments SET stage = 'error', error_message ='${message}' WHERE guid = '${guid}'`;
+
+  message = message.replace(/'/g, "''");
+  
+  const insertQuery = `INSERT INTO deployment_steps (guid, stage, message) VALUES ('${guid}', 'error', '${message}')`;
+  db.any(insertQuery, [true]);
+  
+  const updateQuery = `UPDATE deployments SET stage = 'error', error_message ='${message}', complete = true WHERE guid = '${guid}'`;
   db.any(updateQuery, [true]);
 }
 
@@ -54,9 +62,9 @@ function formatMessage(settings) {
   if (settings.stderr) {
     message = `Error: ${settings.stderr}.`;
 
-    if (message.indexOf('Session expired or invalid') > -1) {
+    // if (message.indexOf('Session expired or invalid') > -1) {
       throw new Error(settings.stderr);
-    }
+    // }
 
   } else {
     message = `${settings.stdout}.`;
@@ -100,7 +108,6 @@ function executeScript(settings, script) {
   return new Promise((resolve) => {
     exec(script, (error, stdout, stderr) => {
 
-      settings.stderr = '';
       if (stderr && error) {
         settings.stderr = stderr.replace(/\r?\n|\r/, '').trim();
       }
@@ -133,7 +140,6 @@ async.whilst(
         guid = settings.guid;
 
         console.log('found job', guid);
-        
 
         settings.tokenName = settings.access_token.replace(/\W/g, '');
         settings.startingDirectory = process.env.STARTINGDIRECTORY;
@@ -147,6 +153,8 @@ async.whilst(
         settings.testScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
         settings.urlScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result.instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result.accessToken)`;
         settings.scratchOrgUrl = '';
+        settings.stderr = '';
+        settings.stdout = '';
 
         return settings;
       })
@@ -192,7 +200,6 @@ async.whilst(
       .then(settings => executeScript(settings, settings.urlScript))
       .then(settings => formatMessage(settings))
       .then(settings => deploymentSteps(settings))
-
       // completed
       .then(settings => setNewStage(settings, 'complete'))
       .then(settings => deploymentStage(settings, true))

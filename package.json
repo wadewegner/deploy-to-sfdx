@@ -33,6 +33,7 @@
     "https": "^1.0.0",
     "jsforce": "^1.8.0",
     "pg": "^7.1.2",
+    "pg-escape": "^0.2.0",
     "pg-pool": "^2.0.3",
     "pg-promise": "^7.0.3",
     "salesforce-oauth2": "^0.1.8",
