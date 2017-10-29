@@ -65,6 +65,8 @@ function formatMessage(settings) {
     
     if (settings.stderr.indexOf('Flag --permsetname expects a value') > -1) {
       message = 'No permset specified.';
+    } else {
+      throw new Error(`GUID: ${settings.guid} ${settings.stderr}`);
     }
 
   } else {

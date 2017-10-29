@@ -3,29 +3,54 @@
   <script type="text/javascript" src="../../scripts/deploying.js"></script>
 
   <main class="slds-card">
-    <div id="loaderBlock"><h2 class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_medium sfdx-wrap"><img src="/dist/assets/images/loader.gif" style="width:27px;" /> Deploying <strong><%= template %></strong></h2></div>
+    <div id="loaderBlock">
+      <h2 class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_medium sfdx-wrap">
+        <img src="/dist/assets/images/loader.gif" style="width:27px;" /> Deploying
+        <strong>
+          <%= template %>
+        </strong>
+      </h2>
+    </div>
 
     <div id="loginBlock" style="display: none;">
       <div class="slds-notify_container slds-is-relative slds-m-bottom_large sfdx-wrap">
 
-        
         <div class="slds-notify slds-notify_toast slds-theme_success" role="alert">
           <span class="slds-assistive-text">warning</span>
 
           <div class="slds-notify__content">
-            <h2 class="slds-text-heading_small ">Nice! Your app has been deployed! You can access it at: <strong><a id="loginUrl" target="_blank" href=""></a></strong></h2>
+            <h2 class="slds-text-heading_small ">Nice! Your app has been deployed! You can access it at:
+              <strong>
+                <a id="loginUrl" target="_blank" href=""></a>
+              </strong>
+            </h2>
           </div>
         </div>
 
-        <p class="slds-m-around_large"><strong>Note:</strong> It can take up to 5 minutes for the my domain DNS to propogate. If the scratch org doesn't load, refresh it in a few minutes.</p>
+        <p class="slds-m-around_large">
+          <strong>Note:</strong> It can take up to 5 minutes for the my domain DNS to propogate. If the scratch org doesn't load,
+          refresh it in a few minutes.</p>
 
       </div>
     </div>
-    
+
+    <div id="errorBlock" style="display: none;">
+      <div class="slds-notify_container slds-is-relative sfdx-wrap">
+
+        <div class="slds-notify slds-notify_toast slds-theme_warning" role="alert">
+          <h2 class="slds-text-heading_small ">Oops! Something went wrong.</h2>
+        </div>
+      </div>
+
+      <div class="slds-m-top_small slds-m-bottom_large">
+        Please log an issue on github on <a href="https://github.com/wadewegner/deploy-to-sfdx/issues" target="_blank">https://github.com/wadewegner/deploy-to-sfdx/issues</a> with the following information:
+      </div>
+    </div>
+
     <div class="slds-box sfdx-output">
       <div id="status"></div>
     </div>
-    
+
   </main>
 
   <input type="hidden" id="template" value="<%= template %>"></input>

@@ -30,13 +30,14 @@ $(document).ready(() => {
         complete = response.complete;
 
         if (stage === 'error') {
-          message = `Sorry, something went wrong. Please log an issue on github: https://github.com/wadewegner/deploy-to-sfdx/issues.\n\nError: ${error_message}\n`;
+          message = `${error_message}`;
         }
 
         update_status(message);
 
         if (complete && stage === 'error') {
           $('div#loaderBlock').hide();
+          $('#errorBlock').show();
         }
 
         if (complete && stage !== 'error') {
