@@ -30,7 +30,7 @@ $(document).ready(() => {
         complete = response.complete;
 
         if (stage === 'error') {
-          message = `${error_message}`;
+          message = `${error_message}<p/><br/><p/>${message}`;
         }
 
         update_status(message);
@@ -90,8 +90,11 @@ $(document).ready(() => {
     url: yamlFile,
     type: 'GET',
     async: false,
-    error: (XMLHttpRequest, textStatus, errorThrown) => {
+    error: () => {
 
+      settings.yamlExists = false;
+      settings.sfdxSource = true;
+      settings.sourceFolder = '';
       settings.assignPermset = 'false';
       settings.permsetName = '';
       settings.deleteScratchOrg = 'false';
@@ -100,17 +103,25 @@ $(document).ready(() => {
       settings.showScratchOrgUrl = 'true';
 
     },
-    success: (yamlFileDataResponse, status) => {
+    success: (yamlFileDataResponse) => {
 
       const doc = jsyaml.load(yamlFileDataResponse);
 
+      settings.yamlExists = true;
+      if (doc['sfdx-source']) {
+        settings.sfdxSource = doc['sfdx-source'];        
+      } else {
+        settings.sfdxSource = true;
+      }
+      if (!settings.sfdxSource) {
+        settings.sourceFolder = doc['source-folder'];
+      }
       settings.assignPermset = doc['assign-permset'];
       settings.permsetName = doc['permset-name'];
       settings.deleteScratchOrg = doc['delete-scratch-org'];
       settings.runApexTests = doc['run-apex-tests'];
       settings.scratchOrgDef = doc['scratch-org-def'];
       settings.showScratchOrgUrl = doc['show-scratch-org-url'];
-
     }
   });
 
