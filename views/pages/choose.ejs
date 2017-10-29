@@ -14,16 +14,14 @@
 
       <fieldset class="slds-form-element">
         <div class="slds-form-element__control">
-          
-          <% var urls = ['https://github.com/forcedotcom/sfdx-dreamhouse', 'https://github.com/forcedotcom/sfdx-simple', 'https://github.com/ccoenraets/northern-trail', 'https://github.com/muenzpraeger/salesforce-einstein-platform-apex'] %>
-          <% for (var i = 0; i < urls.length; i++) { %>
-            
 
+          <% for (var i = 0; i < rows.length; i++) { %>
+            
             <span class="slds-radio">
-              <input type="radio" id="radio-<%=i%>" name="options" <% if (i == 0) {%>checked="checked"<% } %> value="<%= urls[i] %>">
+              <input type="radio" id="radio-<%=i%>" name="options" <% if (i == 0) {%>checked="checked"<% } %> value="<%= rows[i].repo %>">
               <label class="slds-radio__label" for="radio-<%=i%>">
-                <span class="slds-radio_faux"></span> <%= urls[i] %>
-            <span class="slds-form-element__label"><a href="<%= urls[i] %>" target="_blank">^</a></span>
+                <span class="slds-radio_faux"></span> <%= rows[i].repo %> (<%= rows[i].depl %>)
+            <span class="slds-form-element__label"><a href="<%= rows[i].repo %>" target="_blank">^</a></span>
             </label>
             </span>
 
