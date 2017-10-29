@@ -51,7 +51,7 @@ function deploymentError(guid, message) {
   const insertQuery = `INSERT INTO deployment_steps (guid, stage, message) VALUES ('${guid}', 'error', '${message}')`;
   db.any(insertQuery, [true]);
   
-  const updateQuery = `UPDATE deployments SET stage = 'error', error_message ='${message}', complete = true WHERE guid = '${guid}'`;
+  const updateQuery = `UPDATE deployments SET stage = 'error', error_message ='${message}', complete = false WHERE guid = '${guid}'`;
   db.any(updateQuery, [true]);
 }
 
@@ -99,6 +99,15 @@ function formatMessage(settings) {
     if (settings.stage === 'url') {
       settings.scratchOrgUrl = settings.stdout;
       message = `Scratch org URL: ${settings.scratchOrgUrl}.`;
+    }
+    if (settings.stage === 'yaml' ) {
+      console.log('yaml', settings.yamlExists);
+      if (!settings.yamlExists) {
+        message = 'No .salesforcedx.yaml found in repository. Using defaults.';
+      } else {
+        message = 'Using .salesforcedx.yaml found in repository.';
+      }
+
     }
   }
 
@@ -163,6 +172,11 @@ async.whilst(
 
         return settings;
       })
+      // yaml details
+      .then(settings => setNewStage(settings, 'yaml'))
+      .then(settings => deploymentStage(settings))
+      .then(settings => formatMessage(settings))
+      .then(settings => deploymentSteps(settings))
       // clone
       .then(settings => setNewStage(settings, 'clone'))
       .then(settings => deploymentStage(settings))
