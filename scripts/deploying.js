@@ -85,6 +85,7 @@ $(document).ready(() => {
   const settings = {};
   settings.githubRepo = githubRepo;
   settings.guid = guid;
+  settings.dataPlans = [];
 
   $.ajax({
     url: yamlFile,
@@ -122,6 +123,16 @@ $(document).ready(() => {
       settings.runApexTests = doc['run-apex-tests'];
       settings.scratchOrgDef = doc['scratch-org-def'];
       settings.showScratchOrgUrl = doc['show-scratch-org-url'];
+
+      const dataPlanCount = doc['data-plans'].length;
+
+      if (dataPlanCount > 0) {
+        
+        for (var i = 0; i < dataPlanCount; i++) {
+          const dataPlan = doc['data-plans'][i];
+          settings.dataPlans.push(dataPlan);
+        }
+      }
     }
   });
 
