@@ -96,6 +96,9 @@ function formatMessage(settings) {
         message = 'No Apex tests.';
       }
     }
+    if (settings.stage === 'dataplans') {
+      message = 'Data import successful.';
+    }
     if (settings.stage === 'url') {
       settings.scratchOrgUrl = settings.stdout;
       message = `Scratch org URL: ${settings.scratchOrgUrl}.`;
@@ -107,7 +110,6 @@ function formatMessage(settings) {
       } else {
         message = 'Using .salesforcedx.yaml found in repository.';
       }
-
     }
   }
 
@@ -164,6 +166,13 @@ async.whilst(
         settings.createScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;sfdx force:org:create -v '${settings.access_token}' -s -f ${settings.scratchOrgDef}`;
         settings.pushScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;sfdx force:source:push --json | jq '.result.pushedSource | length'`;
         settings.permSetScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;sfdx force:user:permset:assign -n ${settings.permsetName}`;
+
+        settings.dataPlanScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;`;
+        
+        for (let i = 0, len = settings.dataPlans.length; i < len; i++) {
+          settings.dataPlanScript += `sfdx force:data:tree:import --plan ${settings.dataPlans[i]};`;
+        }
+        
         settings.testScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
         settings.urlScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result.instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result.accessToken)`;
         settings.scratchOrgUrl = '';
@@ -205,6 +214,12 @@ async.whilst(
       .then(settings => setNewStage(settings, 'permset'))
       .then(settings => deploymentStage(settings))
       .then(settings => executeScript(settings, settings.permSetScript))
+      .then(settings => formatMessage(settings))
+      .then(settings => deploymentSteps(settings))
+      // dataplans
+      .then(settings => setNewStage(settings, 'dataplans'))
+      .then(settings => deploymentStage(settings))
+      .then(settings => executeScript(settings, settings.dataPlanScript))
       .then(settings => formatMessage(settings))
       .then(settings => deploymentSteps(settings))
       // test
