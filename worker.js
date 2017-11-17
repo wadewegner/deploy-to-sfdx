@@ -180,7 +180,8 @@ async.whilst(
         settings.urlScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result.instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result.accessToken)`;
         // add path if specified in yaml
         if (settings.openPath) {
-          settings.urlScript += `"&retURL="${settings.openPath}`;
+          
+          settings.urlScript += `"&retURL="${encodeURIComponent(settings.openPath)}`;
         }
         settings.scratchOrgUrl = '';
         settings.stderr = '';
