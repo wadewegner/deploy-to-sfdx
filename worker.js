@@ -178,6 +178,10 @@ async.whilst(
 
         settings.testScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;sfdx force:apex:test:run -r human --json | jq -r .result | jq -r .summary | jq -r .outcome`;
         settings.urlScript = `${settings.startingDirectory}cd ${settings.directory};export FORCE_SHOW_SPINNER=;echo $(sfdx force:org:display --json | jq -r .result.instanceUrl)"/secur/frontdoor.jsp?sid="$(sfdx force:org:display --json | jq -r .result.accessToken)`;
+        // add path if specified in yaml
+        if (settings.openPath) {
+          settings.urlScript += `"&retURL="${settings.openPath}`;
+        }
         settings.scratchOrgUrl = '';
         settings.stderr = '';
         settings.stdout = '';

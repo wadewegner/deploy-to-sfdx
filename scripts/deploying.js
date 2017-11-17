@@ -102,6 +102,7 @@ $(document).ready(() => {
       settings.runApexTests = 'false';
       settings.scratchOrgDef = 'config/project-scratch-def.json';
       settings.showScratchOrgUrl = 'true';
+      settings.openPath = '';
 
     },
     success: (yamlFileDataResponse) => {
@@ -123,7 +124,8 @@ $(document).ready(() => {
       settings.runApexTests = doc['run-apex-tests'];
       settings.scratchOrgDef = doc['scratch-org-def'];
       settings.showScratchOrgUrl = doc['show-scratch-org-url'];
-
+      settings.openPath = doc['open-path'];
+      
       const dataPlanCount = doc['data-plans'].length;
 
       if (dataPlanCount > 0) {
