@@ -11,26 +11,22 @@ SET search_path = public, pg_catalog;
 SET default_tablespace = '';
 SET default_with_oids = false;
 
-CREATE TABLE deployments (
+CREATE TABLE deployment_steps (
     id integer NOT NULL,
-    username text,
-    created_at timestamp without time zone DEFAULT now(),
     guid text,
     stage text,
-    repo text,
-    settings text,
-    error_message text,
-    complete boolean DEFAULT false
+    message text,
+    created_at timestamp without time zone DEFAULT now()
 );
 
-CREATE SEQUENCE deployments_id_seq
+CREATE SEQUENCE deployment_steps_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE deployments_id_seq OWNED BY deployments.id;
-ALTER TABLE ONLY deployments ALTER COLUMN id SET DEFAULT nextval('deployments_id_seq'::regclass);
-ALTER TABLE ONLY deployments
-    ADD CONSTRAINT deployments_pkey PRIMARY KEY (id);
+ALTER SEQUENCE deployment_steps_id_seq OWNED BY deployment_steps.id;
+ALTER TABLE ONLY deployment_steps ALTER COLUMN id SET DEFAULT nextval('deployment_steps_id_seq'::regclass);
+ALTER TABLE ONLY deployment_steps
+    ADD CONSTRAINT deployment_steps_pkey PRIMARY KEY (id);
