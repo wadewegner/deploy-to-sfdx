@@ -16,8 +16,9 @@ CREATE TABLE deployments (
     username text,
     created_at timestamp without time zone DEFAULT now(),
     guid text,
-    stage text,
+    stage text default 'init',
     repo text,
+    scratch_url text,
     settings text,
     error_message text,
     complete boolean DEFAULT false
