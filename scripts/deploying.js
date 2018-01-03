@@ -125,8 +125,8 @@ $(document).ready(() => {
       settings.scratchOrgDef = doc['scratch-org-def'];
       settings.showScratchOrgUrl = doc['show-scratch-org-url'];
       settings.openPath = doc['open-path'];
-      
-      const dataPlanCount = doc['data-plans'].length;
+
+      const dataPlanCount = doc['data-plans'] ? doc['data-plans'].length : 0;
 
       if (dataPlanCount > 0) {
         
