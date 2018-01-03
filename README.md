@@ -24,7 +24,7 @@ You'll need the following setup to run this project locally.
 
 4. Create a Postgres database in Heroku.
 
-5. Create the `deployments` table by running the `deployments.sql` script against your Postgres database.
+5. Create the `deployments` and `deployment_steps` tables by running the `deployments.sql` script against your Postgres database.
 
 6. Create a `.env` file to store your local environment settings.
 
