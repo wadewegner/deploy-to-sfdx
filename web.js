@@ -38,7 +38,7 @@ if (process.env.NODE_ENV === 'dev') {
   };
 
   const httpsServer = https.createServer(sslOptions, app);
-  
+
   httpsServer.listen(port, () => {
     console.log(`Example app listening on port ${port}!`);
   });
