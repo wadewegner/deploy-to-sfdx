@@ -10,13 +10,18 @@
   
   <div class="slds-card sfdx-code" readonly>[![Deploy](https://deploy-to-sfdx.com/dist/assets/images/DeployToSFDX.svg)](https://deploy-to-sfdx.com)</div>
 
-  <p class="slds-p-top_medium slds-p-bottom_medium">Next, create a <code>.salesforcedx.yaml</code> file in your repo:</p>
+  <p class="slds-p-top_medium slds-p-bottom_medium">Next, create a <code>.salesforcedx.yaml</code> file in your repo (use what you need):</p>
 
 <div class="slds-card sfdx-code" readonly>scratch-org-def: config/project-scratch-def.json
-assign-permset: false
-run-apex-tests: false
-delete-scratch-org: false
-show-scratch-org-url: true
+  assign-permset: true
+  permset-name: yourpermset
+  run-apex-tests: true
+  delete-scratch-org: false
+  show-scratch-org-url: true
+  open-path: c/YourCustomApp.app
+  data-plans:
+    - ./data/YourCustomObject1__c-plan.json
+    - ./data/YourCustomObject2__c-plan.json
 </div>
     
   <p class="slds-p-top_medium slds-p-bottom_medium">That's it! See the <a href="https://github.com/wadewegner/sfdx-simple/" target="_blank">https://github.com/wadewegner/sfdx-simple</a> for an example of the button in action!</p>

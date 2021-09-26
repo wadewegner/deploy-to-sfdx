@@ -19366,7 +19366,7 @@ a.slds-button--inverse:focus {
     page-break-after: avoid; } }
 
 body {
-  width: 600px;
+  width: 650px;
   margin: 0 auto;
   line-height: 1.5rem; }
 
@@ -19385,13 +19385,13 @@ a.sfdx-logo:visited {
 
 .sfdx-output {
   width: 100%;
-  height: 350px;
-  border-radius: 0.125rem;
-  border: 1px solid #d8dde6;
+  height: 400px;
   padding: 0.75rem;
   line-height: 1.5rem;
   color: #54698d;
-  resize: none; }
+  resize: none;
+  word-break: break-all;
+  overflow: scroll; }
 
 .sfdx-slim {
   margin: 0 5%; }

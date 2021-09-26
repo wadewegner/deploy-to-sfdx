@@ -1,4 +1,3 @@
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -12,10 +11,22 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 CREATE TABLE deployments (
-    id integer NOT NULL,
+    guid text NOT NULL,
     username text,
     created_at timestamp without time zone DEFAULT now(),
-    repo text
+    repo text,
+    stage text DEFAULT 'init',
+    complete boolean DEFAULT false,
+    error_message text,
+    settings text,
+    scratch_url text
+);
+
+CREATE TABLE deployment_steps (
+    guid text NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    stage text,
+    message text
 );
 
 CREATE SEQUENCE deployments_id_seq
@@ -25,7 +36,7 @@ CREATE SEQUENCE deployments_id_seq
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE deployments_id_seq OWNED BY deployments.id;
-ALTER TABLE ONLY deployments ALTER COLUMN id SET DEFAULT nextval('deployments_id_seq'::regclass);
+ALTER SEQUENCE deployments_id_seq OWNED BY deployments.guid;
+ALTER TABLE ONLY deployments ALTER COLUMN guid SET DEFAULT nextval('deployments_id_seq'::regclass);
 ALTER TABLE ONLY deployments
-    ADD CONSTRAINT deployments_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT deployments_pkey PRIMARY KEY (guid);

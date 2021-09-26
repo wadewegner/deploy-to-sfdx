@@ -6,11 +6,11 @@
   <h2 class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_medium">Confirm Deployment Details</h2>
 
   <p class="slds-p-bottom_medium">
-  	<strong>Deploying To</strong><br /> 
+  	<strong>Deploying to:</strong><br /> 
   	<%= user_name %>
   </p>
   <p>
-  	<strong>From Repo</strong><br />
+  	<strong>From repository:</strong><br />
   	<%= template %>
   </p>
 
@@ -21,5 +21,6 @@
 </main>
 
 <input type="hidden" id="template" value="<%= template %>"></input>
+<input type="hidden" id="guid" value="<%= guid %>"></input>
   
 <% include ../partials/footer %>

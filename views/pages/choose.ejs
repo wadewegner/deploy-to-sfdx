@@ -6,46 +6,26 @@
     <h2 class="slds-text-heading_medium slds-p-top_medium slds-p-bottom_medium">Confirm Deployment Details</h2>
 
     <p class="slds-p-bottom_medium">
-      <strong>Deploying To</strong><br />
+      <strong>Deploying to:</strong><br />
       <%= user_name %>
     </p>
     <p>
-      <strong>Choose a Repo</strong><br />
+      <strong>Choose a repository:</strong><br />
 
       <fieldset class="slds-form-element">
         <div class="slds-form-element__control">
-          <span class="slds-radio">
-            <input type="radio" id="radio-1" name="options" checked="checked" value="https://github.com/forcedotcom/sfdx-dreamhouse">
-            <label class="slds-radio__label" for="radio-1">
-              <span class="slds-radio_faux"></span>
-          <span class="slds-form-element__label"><a href="https://github.com/forcedotcom/sfdx-dreamhouse" target="_blank">https://github.com/forcedotcom/sfdx-dreamhouse</a></span>
-          </label>
-          </span>
 
-          <span class="slds-radio">
-            <input type="radio" id="radio-2" name="options" value="https://github.com/forcedotcom/sfdx-simple">
-            <label class="slds-radio__label" for="radio-2">
-              <span class="slds-radio_faux"></span>
-          <span class="slds-form-element__label"><a href="https://github.com/forcedotcom/sfdx-simple" target="_blank">https://github.com/forcedotcom/sfdx-simple</a></span>
-          </label>
-          </span>
+          <% for (var i = 0; i < rows.length; i++) { %>
+            
+            <span class="slds-radio">
+              <input type="radio" id="radio-<%=i%>" name="options" <% if (i == 0) {%>checked="checked"<% } %> value="<%= rows[i].repo %>">
+              <label class="slds-radio__label" for="radio-<%=i%>">
+                <span class="slds-radio_faux"></span> <%= rows[i].repo %> (<%= rows[i].depl %>)
+            <span class="slds-form-element__label"><a href="<%= rows[i].repo %>" target="_blank">^</a></span>
+            </label>
+            </span>
 
-          <span class="slds-radio">
-              <input type="radio" id="radio-3" name="options" value="https://github.com/ccoenraets/northern-trail">
-              <label class="slds-radio__label" for="radio-3">
-                <span class="slds-radio_faux"></span>
-          <span class="slds-form-element__label"><a href="https://github.com/ccoenraets/northern-trail" target="_blank">https://github.com/ccoenraets/northern-trail</a></span>
-          </label>
-          </span>
-
-          <!-- <span class="slds-radio">
-            <input type="radio" id="radio-4" name="options" value="https://github.com/muenzpraeger/salesforce-einstein-platform-apex">
-            <label class="slds-radio__label" for="radio-4">
-              <span class="slds-radio_faux"></span>
-          <span class="slds-form-element__label"><a href="https://github.com/muenzpraeger/salesforce-einstein-platform-apex" target="_blank">https://github.com/muenzpraeger/salesforce-einstein-platform-apex</a></span>
-          </label>
-          </span> -->
-
+          <% } %>
 
         </div>
       </fieldset>
